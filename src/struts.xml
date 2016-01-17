@@ -7,7 +7,7 @@
 	<constant name="struts.multipart.saveDir" value="/tmp"></constant>
 	<constant name="struts.multipart.maxSize" value="90000000" />
 	<constant name="struts.i18n.encoding" value="UTF-8" />
-	<constant name="struts.action.excludePattern" value="/api/my/hehe"></constant>
+	<constant name="struts.action.excludePattern" value="/api/.*"></constant>
 	<constant name="debug" value="false" />
 	<include file="struts_user.xml"></include>
 </struts>
