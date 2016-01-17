@@ -29,7 +29,11 @@
 	<bean id="padDaoImpl" class="com.pad.dao.impl.PadDaoImpl" scope="prototype">
 		<property name="sessionFactory" ref="mysf"></property>
 	</bean>
-
+	
+	<bean id="myApi" class="com.pad.api.MyApi" scope="prototype">
+		<property name="sessionFactory" ref="mysf"></property>
+	</bean>
+	
 	<!-- service -->
 	<bean id="baseServiceImpl" class="com.pad.service.impl.BaseServiceImpl"
 		scope="prototype">
