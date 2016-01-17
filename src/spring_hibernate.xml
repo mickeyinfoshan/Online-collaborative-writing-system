@@ -38,6 +38,23 @@
 			</value>
 		</property>
 	</bean>
+	
+	 <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="myds" />
+		<property name="annotatedClasses">
+     		<list>
+       			<value>com.pad.entity.Comment</value>
+     		</list>
+ 		</property>
+		<property name="hibernateProperties">
+			<value>
+				hibernate.dialect =org.hibernate.dialect.MySQLDialect
+				hibernate.show_sql=true
+				hibernate.hbm2ddl.auto=update
+			</value>
+		</property>
+	</bean>
+	
 	<!-- 事务加在dao 为了测试 -->
 	<bean id="myTxManager"
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
@@ -70,4 +87,6 @@
 	</bean>
 	<bean id="imageCodeFilter" class="com.pad.filter.ImageCodeFilter">
 	</bean>
+	
+	<context:component-scan base-package="com.pad.api" />
 </beans>
