@@ -1,3 +1,4 @@
 /target/
 .settings/
 WebContent/node_modules/
+node_modules/

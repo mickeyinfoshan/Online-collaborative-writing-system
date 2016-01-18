@@ -32,6 +32,8 @@
 </div>
 <div class="content">
     <div class="left info">
+        <div id="missionBlock"></div>
+        <br /><br />
         <div id="chartRight">
             <div id="zzd_title">
                 参与者的专注度
@@ -41,6 +43,7 @@
     <div class="right info">
         <div id="pad_orders"></div>
         <div id="pad_orders2"></div>
+        <div id="commentBlock"></div>
     </div>
     <div class="center">
         <iframe id="editor" style="border: 1px solid #ddd;"></iframe>
@@ -136,6 +139,11 @@
                             pid = window.opener.edit.groupID + "$" + window.opener.edit.name;
                             group = window.opener.edit.group;
                             userName = $.user.name;
+
+                            window.GLOBAL = window.GLOBAL || {};
+                            window.GLOBAL.pad_id = pid;
+                            window.GLOBAL.user_name = userName;
+                            window.GLOBAL.user_id = $.user.authorId;
 
                             function setCookie() {
                                 pad.setCookie("sessionID", $.session.sessionID, function () {
@@ -239,5 +247,6 @@
         })
     });
 </script>
+<script type="text/javascript" src="js/dist/edit.js"></script>
 </body>
 </html>

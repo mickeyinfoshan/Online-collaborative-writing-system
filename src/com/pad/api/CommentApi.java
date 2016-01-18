@@ -11,30 +11,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.pad.entity.Comment;
 
 @Component
 @Path("/comment")
-public class CommentApi {
-	@Autowired
-	protected SessionFactory sessionFactory;
-
-	protected Session getSession() {
-		return this.sessionFactory.openSession();
-	}
-
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
+public class CommentApi extends BaseApi{
 	
 	@GET
 	@Path("/{pad_id}/list")
@@ -43,7 +27,7 @@ public class CommentApi {
 			@PathParam("pad_id") String pad_id
 	){
 		Session session = getSession();
-		String query = "from Comment C where C.pad_id=" + pad_id;
+		String query = "from Comment C where C.pad_id='" + pad_id + "'";
 		List<Comment> list = (List<Comment>)(session.createQuery(query).list());
 		session.close();
 		int size = list.size();

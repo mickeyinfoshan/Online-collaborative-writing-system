@@ -41,9 +41,13 @@
 	
 	 <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="myds" />
+		<!-- 这里真丑 但是hibernate3好像不支持package scan -->
 		<property name="annotatedClasses">
      		<list>
        			<value>com.pad.entity.Comment</value>
+       			<value>com.pad.entity.Course</value>
+       			<value>com.pad.entity.Mission</value>
+       			<value>com.pad.entity.MissionPad</value>
      		</list>
  		</property>
 		<property name="hibernateProperties">

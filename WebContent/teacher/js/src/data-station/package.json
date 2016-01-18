@@ -1,0 +1,70 @@
+{
+  "name": "data-station",
+  "description": "components for flux architecture ",
+  "version": "0.0.8",
+  "keywords": [
+    "dataStation",
+    "dispatcher",
+    "undirectional"
+  ],
+  "dependencies": {
+    "events": "^1.1.0"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "devDependencies": {
+    "babel-core": "^6.2.1",
+    "babel-loader": "^6.2.0",
+    "jasmine": "^2.3.2",
+    "karma": "^0.13.15",
+    "karma-chrome-launcher": "^0.2.1",
+    "karma-jasmine": "^0.3.6",
+    "karma-webpack": "^1.7.0",
+    "webpack": "^1.12.9",
+    "webpack-dev-server": "^1.14.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjhlybmwq/Flux-Architecture.git"
+  },
+  "author": {
+    "name": "Mickey May"
+  },
+  "bugs": {
+    "url": "https://github.com/mjhlybmwq/Flux-Architecture/issues"
+  },
+  "homepage": "https://github.com/mjhlybmwq/Flux-Architecture#readme",
+  "gitHead": "158f76b25c1475819e17343e1044e8b3af4e0808",
+  "_id": "data-station@0.0.8",
+  "_shasum": "fc767e01984936f1cce53f4488e383bf63f60e1c",
+  "_from": "data-station@*",
+  "_npmVersion": "3.3.6",
+  "_nodeVersion": "5.0.0",
+  "_npmUser": {
+    "name": "mickeyinfoshan",
+    "email": "mickey.in.foshan@gmail.com"
+  },
+  "dist": {
+    "shasum": "fc767e01984936f1cce53f4488e383bf63f60e1c",
+    "size": 417759,
+    "noattachment": false,
+    "tarball": "http://registry.npm.taobao.org/data-station/download/data-station-0.0.8.tgz"
+  },
+  "maintainers": [
+    {
+      "name": "mickeyinfoshan",
+      "email": "mickey.in.foshan@gmail.com"
+    }
+  ],
+  "publish_time": 1450748779010,
+  "_cnpm_publish_time": 1450748779010,
+  "_resolved": "http://registry.npm.taobao.org/data-station/download/data-station-0.0.8.tgz",
+  "readme": "ERROR: No README data found!"
+}
