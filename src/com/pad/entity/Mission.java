@@ -14,7 +14,7 @@ public class Mission {
 	private String name;
 	private String created_time;
 	private String start;
-	private String deadline;
+	private String end;
 	
 	@Id
 	@GeneratedValue
@@ -50,11 +50,12 @@ public class Mission {
 	public void setStart(String start) {
 		this.start = start;
 	}
-	public String getDeadline() {
-		return deadline;
+	
+	public String getEnd() {
+		return end;
 	}
-	public void setDeadline(String deadline) {
-		this.deadline = deadline;
+	public void setEnd(String end) {
+		this.end = end;
 	}
 	
 }

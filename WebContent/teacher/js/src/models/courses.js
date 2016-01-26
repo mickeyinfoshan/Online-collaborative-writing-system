@@ -19,7 +19,7 @@ class Courses extends Model {
 			});
 			return;
 		}
-		var url = server + `/pad/api/course/${user.id}/list`;
+		var url = server + `/pad/api/course/teacher/${user.id}/list`;
 		var _this = this;
 		$.get(url, function(res) {
 			_this.set({
@@ -28,15 +28,43 @@ class Courses extends Model {
 		});
 	}
 
-	addCourse(course) {
+	create(course) {
 		if(!user.id) {
 			return;
 		}
 		course.teacher_id = user.id;
 		course.teacher_name = user.name;
-		var url = server + `/pad/api/course/${user.id}/create`;
+		var now = new Date();
+		course.created_time = now.getTime();
+		var url = server + `/pad/api/course/teacher/${user.id}/create`;
 		var _this = this;
 		$.post(url, course, function(res) {
+			_this.init();
+		});
+	}
+
+	update(course) {
+		if(!course.id) {
+			return;
+		}
+		if(!course.name) {
+			return;
+		}
+		var url = server + `/pad/api/course/${course.id}/update/`;
+		var _this = this;
+		$.post(url, course, function(res) {
+			_this.init();
+		});
+	}
+
+	delete(course) {
+		if(!course.id) {
+			return;
+		}
+
+		var url = server + `/pad/api/course/${course.id}/delete/`;
+		var _this = this;
+		$.get(url, function(res) {
 			_this.init();
 		});
 	}

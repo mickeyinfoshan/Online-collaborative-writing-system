@@ -42,6 +42,12 @@ selected.addHandler(function() {
 			mission : null
 		});
 	}
+	else {
+		var mission = missions._missions[index];
+		selected.set({
+			mission : mission
+		});
+	}
 }, "Missions.change");
 
 module.exports = selected;

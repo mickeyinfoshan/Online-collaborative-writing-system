@@ -8,40 +8,42 @@ var $ = require("jquery");
 
 const colors = styles.Colors;
 
+var selectedPad = require("../models/selectedPad");
+
+var {Base} = require("../data-station/index"); 
+
 const CommentList = React.createClass({
+	
 	getInitialState: function() {
 		return {
 			comments : [] 
 		};
 	},
+
 	componentDidMount: function() {
 		this.getComments();
+		this.ds = new Base();
+		this.ds.addSource(selectedPad, "SelectedPad.change");
+		var _this = this;
+		this.ds.addHandler(function() {
+			_this.getComments();
+		}, "SelectedPad.change");
 	},
 
 	getComments : function() {
 		var _this = this;
 		
-		function _getComments() {
-			setTimeout(function() {
-				_this.getComments();
-			}, 6000);
-		}
-
-		if(!window.GLOBAL) {
-			_getComments();	
+		if(!selectedPad.pad) {
+			this.setState({
+				comments : [] 
+			});
 			return;
 		}
 
-		var pad_id = window.GLOBAL.pad_id;
-		
-		if(!pad_id) {
-			_getComments();
-			return;
-		}
+		var pad_id = selectedPad.pad.pad_id;
 
 		var url = `/pad/api/comment/${pad_id}/list`;
 		$.get(url, function(res) {
-			_getComments();
 			_this.setState({
 				comments : res 
 			});			
@@ -57,7 +59,7 @@ const CommentList = React.createClass({
 		      leftAvatar={
 		        <Avatar
 		          color={"#fff"}
-		          backgroundColor={colors.grey900}
+		          backgroundColor={colors.grey600}
 		        >
 		          {letter}
 		        </Avatar>

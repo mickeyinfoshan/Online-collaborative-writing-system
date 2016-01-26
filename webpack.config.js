@@ -1,7 +1,8 @@
 var path = require("path");
 module.exports = {
     entry : {edit : "./WebContent/js/src/edit.js",
-              teacher : "./WebContent/teacher/js/src/index.js"
+              teacher : "./WebContent/teacher/js/src/index.js",
+              student : "./WebContent/js/src/student.js"
             },
 		module: {
       		loaders: [

@@ -18,7 +18,6 @@ var MissionBlock = React.createClass({
 			selectedCourseId : -1,
 			missions : [],
 			selectedMissionId : -1,
-			teacher_id : -1
 		};
 	},
 
@@ -35,12 +34,32 @@ var MissionBlock = React.createClass({
 
 	hideDialog : function() {
 		this.setDialog(false);
+		this.setState({
+			courses : [],
+			selectedCourseId : -1,
+			missions : [],
+			selectedMissionId : -1 
+		});
 	},
 	save : function() {
-		this.hideDialog();
+		if(this.state.selectedCourseId < 0 || this.state.selectedMissionId < 0) {
+			return;
+		}
+		if(!window.GLOBAL.pad_id) {
+			return;
+		}
+		var pad_id = window.GLOBAL.pad_id;
+		var url = `/pad/api/mission/${this.state.selectedMissionId}/pad/add/${pad_id}`; 
+		$.get(url, function(res) {
+			this.hideDialog();
+		}.bind(this));
 	},
 	getCourses : function() {
-		var url = `/pad/api/course/${this.state.teacher_id}/list`;
+		if(!window.GLOBAL.user_id) {
+			return;
+		}
+		var userId = window.GLOBAL.user_id;
+		var url = `/pad/api/course/student/${userId}/selected`;
 		var _this = this;
 		$.get(url, function(res) {
 			var currentSelectedCourseId = _this.state.selectedCourseId;
@@ -60,7 +79,7 @@ var MissionBlock = React.createClass({
 			return;
 		}
 
-		var url = `/pad/api/mission/${this.state.selectedCourseId}/list`;
+		var url = `/pad/api/course/${this.state.selectedCourseId}/mission/list`;
 		var _this = this;
 		$.get(url, function(res) {
 			var currentSelectedMissionId = _this.state.selectedMissionId;
@@ -110,9 +129,9 @@ var MissionBlock = React.createClass({
 
 		return (
 			<div>
-				<RaisedButton label="任务设置" onTouchTap={this.showDialog} primary={true} />
+				<RaisedButton label="作业提交" onTouchTap={this.showDialog} primary={true} />
 				<Dialog
-		          title="任务设置"
+		          title="作业提交"
 		          actions={actions}
 		          modal={false}
 		          open={this.state.isDialogShow}

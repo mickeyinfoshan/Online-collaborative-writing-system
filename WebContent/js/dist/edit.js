@@ -37852,7 +37852,7 @@
 			function _getComments() {
 				setTimeout(function () {
 					_this.getComments();
-				}, 3000);
+				}, 6000);
 			}
 
 			if (!window.GLOBAL) {
@@ -37878,7 +37878,7 @@
 
 		render: function render() {
 			var comments = this.state.comments.map(function (comment) {
-				var letter = comment.user_name[0];
+				var letter = comment.user_name.charAt(0);
 				return _react2.default.createElement(
 					_listItem2.default,
 					{
@@ -40394,8 +40394,7 @@
 				courses: [],
 				selectedCourseId: -1,
 				missions: [],
-				selectedMissionId: -1,
-				teacher_id: -1
+				selectedMissionId: -1
 			};
 		},
 
@@ -40412,12 +40411,32 @@
 
 		hideDialog: function hideDialog() {
 			this.setDialog(false);
+			this.setState({
+				courses: [],
+				selectedCourseId: -1,
+				missions: [],
+				selectedMissionId: -1
+			});
 		},
 		save: function save() {
-			this.hideDialog();
+			if (this.state.selectedCourseId < 0 || this.state.selectedMissionId < 0) {
+				return;
+			}
+			if (!window.GLOBAL.pad_id) {
+				return;
+			}
+			var pad_id = window.GLOBAL.pad_id;
+			var url = '/pad/api/mission/' + this.state.selectedMissionId + '/pad/add/' + pad_id;
+			$.get(url, function (res) {
+				this.hideDialog();
+			}.bind(this));
 		},
 		getCourses: function getCourses() {
-			var url = '/pad/api/course/' + this.state.teacher_id + '/list';
+			if (!window.GLOBAL.user_id) {
+				return;
+			}
+			var userId = window.GLOBAL.user_id;
+			var url = '/pad/api/course/student/' + userId + '/selected';
 			var _this = this;
 			$.get(url, function (res) {
 				var currentSelectedCourseId = _this.state.selectedCourseId;
@@ -40439,7 +40458,7 @@
 				return;
 			}
 
-			var url = '/pad/api/mission/' + this.state.selectedCourseId + '/list';
+			var url = '/pad/api/course/' + this.state.selectedCourseId + '/mission/list';
 			var _this = this;
 			$.get(url, function (res) {
 				var currentSelectedMissionId = _this.state.selectedMissionId;
@@ -40489,11 +40508,11 @@
 			return React.createElement(
 				'div',
 				null,
-				React.createElement(_raisedButton2.default, { label: '任务设置', onTouchTap: this.showDialog, primary: true }),
+				React.createElement(_raisedButton2.default, { label: '作业提交', onTouchTap: this.showDialog, primary: true }),
 				React.createElement(
 					_dialog2.default,
 					{
-						title: '任务设置',
+						title: '作业提交',
 						actions: actions,
 						modal: false,
 						open: this.state.isDialogShow,

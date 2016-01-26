@@ -16,7 +16,7 @@ class Pads extends Model {
 			});
 			return;
 		}
-		var url = `/pad/api/pad/${selectedMission.mission.id}/list`;
+		var url = `/pad/api/mission/${selectedMission.mission.id}/pad/list`;
 		var _this = this;
 		var _this = this;
 		$.get(url, function(res) {

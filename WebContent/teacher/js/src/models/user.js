@@ -29,6 +29,14 @@ class User extends Model {
 		});
 	}
 
+	logout() {
+		this.set({
+			id : "",
+			name : "",
+			email : ""
+		});
+	}
+
 	register(email, name, password) {
 		var data = {};
 		data["user.username"] = email;

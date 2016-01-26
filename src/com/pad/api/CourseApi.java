@@ -15,13 +15,15 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
 
 import com.pad.entity.Course;
+import com.pad.entity.CourseStudent;
+import com.pad.entity.Mission;
 
 @Component
 @Path("/course")
 public class CourseApi extends BaseApi {
 	
 	@GET
-	@Path("/{teacher_id}/list")
+	@Path("/teacher/{teacher_id}/list")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Course[] getCourses(@PathParam("teacher_id") String teacher_id) {
 		String query = "from Course C where teacher_id='" + teacher_id + "'";
@@ -36,7 +38,7 @@ public class CourseApi extends BaseApi {
 	}
 	
 	@POST
-	@Path("/{teacher_id}/create")
+	@Path("/teacher/{teacher_id}/create")
 	public String createCourse(
 			@PathParam("teacher_id") String teacher_id,
 			@FormParam(value="teacher_name") String teacher_name,
@@ -58,12 +60,131 @@ public class CourseApi extends BaseApi {
 	}
 	
 	@POST
-	@Path("/{teacher_id}/update/{course_id}")
-	public String updateCourse(@PathParam("teacher_id") String teacher_id,
-			@FormParam(value="teacher_name") String teacher_name,
-			@FormParam(value="name") String name,
-			@FormParam(value="created_time") String created_time) {
+	@Path("/{course_id}/update")
+	public String updateCourse(
+			@PathParam("teacher_id") String teacher_id,
+			@PathParam("course_id") int course_id,
+			@FormParam(value="name") String name
+		) {
 		
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		Course course = (Course)session.get(Course.class, course_id);
+		course.setName(name);
+		session.save(course);
+		t.commit();
+		session.close();
 		return "200";
 	}
+
+	@GET
+	@Path("/{course_id}/delete")
+	public String deleteCourse(
+			@PathParam("teacher_id") String teacher_id,
+			@PathParam("course_id") int course_id
+		) {
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		Course course = (Course)session.get(Course.class, course_id);
+		session.delete(course);
+		t.commit();
+		session.close();
+		return "200";
+	}
+	
+	@GET
+	@Path("/{course_id}/mission/list")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Mission[] getMissionList(
+				@PathParam("course_id") int course_id
+			) {
+		
+		Session session = getSession();
+		String query = "from Mission M where M.course=" + course_id;
+		List<Mission> list = (List<Mission>)(session.createQuery(query).list());
+		session.close();
+		Mission[] missions = new Mission[list.size()];	
+		return (Mission[])list.toArray(missions);
+	}
+
+	@POST
+	@Path("/{course_id}/mission/create")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String createMission(@PathParam("course_id") int course_id,
+			@FormParam(value="name") String name,
+			@FormParam(value="start") String start,
+			@FormParam(value="end") String end,
+			@FormParam(value="created_time") String created_time
+		) {
+		Session session = getSession();
+		Course course = (Course)session.get(Course.class, course_id);
+		Mission mission = new Mission();
+		mission.setCourse(course);
+		mission.setStart(start);
+		mission.setEnd(end);
+		mission.setName(name);
+		mission.setCreated_time(created_time);
+		Transaction t = session.beginTransaction();
+		session.save(mission);
+		t.commit();
+		session.close();
+		return "200";
+	}
+	
+	@GET
+	@Path("/{course_id}/student/add/{student_id}")
+	public String addStudent(@PathParam("course_id") int course_id,
+			@PathParam("student_id") String student_id) {
+		Session session = getSession();
+		String query = "from CourseStudent CS where CS.student_id='" + student_id + "' and CS.course=" + course_id;
+		List<CourseStudent> list = (List<CourseStudent>)session.createQuery(query).list();
+		if(list.size() <= 0) {
+			Transaction t = session.beginTransaction();
+			Course course = (Course)session.get(Course.class, course_id);
+			CourseStudent cs = new CourseStudent();
+			cs.setCourse(course);
+			cs.setStudent_id(student_id);
+			session.save(cs);
+			t.commit();
+		}
+		session.close();
+		return "200";
+	}
+	
+	@GET
+	@Path("/{course_id}/student/count")
+	public int countStudnet(@PathParam("course_id") int course_id) {
+		Session session = getSession();
+		String query = "select count(*) from CourseStudent CS where CS.course=" + course_id;
+		int count = ((Long)session.createQuery(query).uniqueResult()).intValue();
+		session.close();
+		return count;
+	}
+	
+	@GET
+	@Path("/student/{student_id}/selected")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Course[] getStudentSelectedCourses(@PathParam("student_id") String student_id) {
+		Session session = getSession();
+		String query = "select course from CourseStudent CS where CS.student_id='" + student_id + "'";
+		List<Course> list = (List<Course>)session.createQuery(query).list();
+		Course[] courses = new Course[list.size()];
+		session.close();
+		return (Course[])list.toArray(courses);
+	}
+	
+
+	@GET
+	@Path("/student/{student_id}/not/selected")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Course[] getStudentNotSelectedCourses(@PathParam("student_id") String student_id) {
+		Session session = getSession();
+		String nested_query = "(select course from CourseStudent CS where CS.student_id='" + student_id + "')";
+		String query = "from Course C where C.id not in" + nested_query;
+		List<Course> list = (List<Course>)session.createQuery(query).list();
+		Course[] courses = new Course[list.size()];
+		session.close();
+		return (Course[])list.toArray(courses);
+	}
+	
 }

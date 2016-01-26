@@ -12,12 +12,9 @@ class SelectedCourse extends Model {
 	}
 
 	selectCourse(courseId) {
-		console.log(courseId);
 		var index = _.findIndex(courses._courses, function(c) {
 			return c.id == courseId;
 		});
-		console.log(courses._courses);
-		console.log(index);
 		if(index < 0) {
 			return;
 		}
@@ -34,15 +31,20 @@ selected.addSource(courses, "Courses.change");
 
 selected.addHandler(function() {
 	var currentCourse = selected.course;
-	var index = _.findIndex(courses._courses, function(c) {
-		if(!currentCourse) {
+	if(!currentCourse) {
 			return false;
-		}
+	}
+	var index = _.findIndex(courses._courses, function(c) {
 		return c.id == currentCourse.id;
 	});
 	if(index < 0) {
 		selected.set({
 			course : null
+		});
+	}
+	else if(courses._courses[index].name != currentCourse.name) {
+		selected.set({
+			course : courses._courses[index]
 		});
 	}
 }, "Courses.change");

@@ -17,7 +17,7 @@ class Missions extends Model {
 			});
 			return;
 		}
-		var url = server + `/pad/api/mission/${selectedCourse.course.id}/list`;
+		var url = server + `/pad/api/course/${selectedCourse.course.id}/mission/list`;
 		var _this = this;
 		$.get(url, function(res) {
 			_this.set({
@@ -26,12 +26,25 @@ class Missions extends Model {
 		});
 	}
 
-	addMission(mission) {
+	create(mission) {
 		var _this = this;
 		if(!selectedCourse.course) {
 			return;
 		}
-		var url = server + `/pad/api/mission/${selectedCourse.course.id}/create`;
+		var now = new Date();
+		mission.created_time = now.getTime();
+		var url = server + `/pad/api/course/${selectedCourse.course.id}/mission/create`;
+		$.post(url, mission, function(res) {
+			_this.init();
+		});
+	}
+
+	update(mission) {
+		var _this = this;
+		if(!mission.id) {
+			return;
+		}
+		var url = server + `/pad/api/mission/${mission.id}/update`;
 		$.post(url, mission, function(res) {
 			_this.init();
 		});
