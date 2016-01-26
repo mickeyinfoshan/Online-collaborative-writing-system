@@ -32,11 +32,13 @@ var MissionDialog = React.createClass({
 				_this.state.name = "";
 				_this.state.start = null;
 				_this.state.end = null;
+				_this.state.content = "";
 			}
 			else if(dialogController.mission == "update") {
 				_this.state.name = selectedMission.mission.name;
 				_this.state.start = new Date(Number(selectedMission.mission.start));
 				_this.state.end = new Date(Number(selectedMission.mission.end));
+				_this.state.content = selectedMission.mission.content || "";
 			}
 			_this.forceUpdate();
 		}, "DialogController.change");
@@ -61,7 +63,7 @@ var MissionDialog = React.createClass({
 	},
 	setContent : function(e) {
 		this.setState({
-			content : e.target.getValue() 
+			content : this.refs.contentInput.getValue()
 		});
 	},
 	save : function() {
@@ -81,6 +83,7 @@ var MissionDialog = React.createClass({
 			name : this.state.name,
 			start : this.state.start.getTime(),
 			end : this.state.end.getTime(),
+			content : this.state.content
 		};
 		if(dialogController.mission == "create") {
 			missions.create(mission);
@@ -130,7 +133,7 @@ var MissionDialog = React.createClass({
 	          open={!hide}
 	          onRequestClose={dialogController.hideAll.bind(dialogController)}>
 	          <div>
-	          <div style={{display : "inline-block"}}>
+	          <div style={{display : "inline-block", verticalAlign : "top"}}>
 	          <TextField floatingLabelText="请输入作业名称" 
 	          			ref="nameInput" 
 	          			hintText="" onChange={this.setName} value={this.state.name} /><br />
@@ -145,10 +148,11 @@ var MissionDialog = React.createClass({
         		onChange={this.setEnd}
       		  />
       		  </div>
-      		  <div style={{display:"inline-block"}} >
+      		  <div style={{display:"inline-block", verticalAlign : "top", marginLeft : 25}} >
       		  	<TextField floatingLabelText="请输入作业内容" 
+      		  			ref="contentInput"
 	          			hintText="" onChange={this.setContent} value={this.state.content} 
-	          			multiLine={true} rows={4}/>
+	          			multiLine={true} />
       		  </div>
       		  </div>          
 	        </Dialog>

@@ -51,13 +51,15 @@ public class MissionApi extends BaseApi{
 			@PathParam("mission_id") int mission_id,
 			@FormParam(value="name") String name,
 			@FormParam(value="start") String start,
-			@FormParam(value="end") String end
+			@FormParam(value="end") String end,
+			@FormParam(value="content") String content
 		) {
 		
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
 		Mission mission = (Mission)session.get(Mission.class, mission_id);
 		mission.setName(name);
+		mission.setContent(content);
 		mission.setStart(start);
 		mission.setEnd(end);
 		session.save(mission);

@@ -15,6 +15,7 @@ public class Mission {
 	private String created_time;
 	private String start;
 	private String end;
+	private String content;
 	
 	@Id
 	@GeneratedValue
@@ -56,6 +57,12 @@ public class Mission {
 	}
 	public void setEnd(String end) {
 		this.end = end;
+	}
+	public String getContent() {
+		return content;
+	}
+	public void setContent(String content) {
+		this.content = content;
 	}
 	
 }

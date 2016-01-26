@@ -59,7 +59,7 @@ var SelectedCourseBlock = React.createClass({
 		if(!selectedCourse.course) {
 			return <div />;	
 		}
-		var created_time = new Date(selectedCourse.course.created_time);
+		var created_time = new Date(Number(selectedCourse.course.created_time));
 		var year = created_time.getFullYear();
 		var month = created_time.getMonth() + 1;
 		var day = created_time.getDate();

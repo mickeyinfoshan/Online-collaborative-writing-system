@@ -114,7 +114,8 @@ public class CourseApi extends BaseApi {
 			@FormParam(value="name") String name,
 			@FormParam(value="start") String start,
 			@FormParam(value="end") String end,
-			@FormParam(value="created_time") String created_time
+			@FormParam(value="created_time") String created_time,
+			@FormParam(value="content") String content
 		) {
 		Session session = getSession();
 		Course course = (Course)session.get(Course.class, course_id);
@@ -124,6 +125,7 @@ public class CourseApi extends BaseApi {
 		mission.setEnd(end);
 		mission.setName(name);
 		mission.setCreated_time(created_time);
+		mission.setContent(content);
 		Transaction t = session.beginTransaction();
 		session.save(mission);
 		t.commit();
@@ -187,4 +189,19 @@ public class CourseApi extends BaseApi {
 		return (Course[])list.toArray(courses);
 	}
 	
+	@GET
+	@Path("/{course_id}/student/remove/{student_id}")
+	public String removeStudentFromCourse(@PathParam("student_id") String student_id,@PathParam("course_id") int course_id) {
+		Session session = getSession();
+		String query = "from CourseStudent CS where CS.student_id='" + student_id + "' and CS.course=" + course_id;
+		List<CourseStudent> list = (List<CourseStudent>)session.createQuery(query).list();
+		if(list.size() > 0) {
+			Transaction t = session.beginTransaction();
+			CourseStudent cs = list.get(0);
+			session.delete(cs);
+			t.commit();
+		}
+		session.close();
+		return "200";
+	}
 }
