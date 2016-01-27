@@ -38,8 +38,9 @@ public class CourseApi extends BaseApi {
 			query = "from Course C";
 		}
 		Session s = getSession();
+		Transaction t = s.beginTransaction();
 		List<Course> list = (List<Course>)(s.createQuery(query).list());
-		s.close();
+		t.commit();
 		Course[] courses = new Course[list.size()];
 		return (Course[])(list.toArray(courses));
 	}
