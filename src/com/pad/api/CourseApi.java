@@ -63,7 +63,6 @@ public class CourseApi extends BaseApi {
 		Transaction t = s.beginTransaction();
 		s.save(course);
 		t.commit();
-		s.close();
 		return "200";
 	}
 	
@@ -81,7 +80,6 @@ public class CourseApi extends BaseApi {
 		course.setName(name);
 		session.save(course);
 		t.commit();
-		session.close();
 		return "200";
 	}
 
@@ -96,7 +94,6 @@ public class CourseApi extends BaseApi {
 		Course course = (Course)session.get(Course.class, course_id);
 		session.delete(course);
 		t.commit();
-		session.close();
 		return "200";
 	}
 	
@@ -108,9 +105,10 @@ public class CourseApi extends BaseApi {
 			) {
 		
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		String query = "from Mission M where M.course=" + course_id;
 		List<Mission> list = (List<Mission>)(session.createQuery(query).list());
-		session.close();
+		t.commit();
 		Mission[] missions = new Mission[list.size()];	
 		return (Mission[])list.toArray(missions);
 	}
@@ -127,6 +125,7 @@ public class CourseApi extends BaseApi {
 			@FormParam(value="content") String content
 		) {
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		Course course = (Course)session.get(Course.class, course_id);
 		Mission mission = new Mission();
 		mission.setCourse(course);
@@ -135,12 +134,10 @@ public class CourseApi extends BaseApi {
 		mission.setName(name);
 		mission.setCreated_time(created_time);
 		mission.setContent(content);
-		Transaction t = session.beginTransaction();
 		session.save(mission);
-		t.commit();
 		String query = "select student_id from CourseStudent cs where cs.course=" + course_id;
 		List<String> receivers = (List<String>)session.createQuery(query).list();
-		session.close();
+		t.commit();
 		MailThread mt = new MailThread();
 		mt.setMission(mission);
 		mt.setSessionFactory(mysf);
@@ -154,18 +151,17 @@ public class CourseApi extends BaseApi {
 	public String addStudent(@PathParam("course_id") int course_id,
 			@PathParam("student_id") String student_id) {
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		String query = "from CourseStudent CS where CS.student_id='" + student_id + "' and CS.course=" + course_id;
 		List<CourseStudent> list = (List<CourseStudent>)session.createQuery(query).list(); //直接拷过来的，懒得用uniqueResult
 		if(list.size() <= 0) {
-			Transaction t = session.beginTransaction();
 			Course course = (Course)session.get(Course.class, course_id);
 			CourseStudent cs = new CourseStudent();
 			cs.setCourse(course);
 			cs.setStudent_id(student_id);
 			session.save(cs);
-			t.commit();
 		}
-		session.close();
+		t.commit();
 		return "200";
 	}
 	
@@ -173,9 +169,10 @@ public class CourseApi extends BaseApi {
 	@Path("/{course_id}/student/count")
 	public int countStudnet(@PathParam("course_id") int course_id) {
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		String query = "select count(*) from CourseStudent CS where CS.course=" + course_id;
 		int count = ((Long)session.createQuery(query).uniqueResult()).intValue();
-		session.close();
+		t.commit();
 		return count;
 	}
 	
@@ -184,10 +181,11 @@ public class CourseApi extends BaseApi {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Course[] getStudentSelectedCourses(@PathParam("student_id") String student_id) {
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		String query = "select course from CourseStudent CS where CS.student_id='" + student_id + "'";
 		List<Course> list = (List<Course>)session.createQuery(query).list();
 		Course[] courses = new Course[list.size()];
-		session.close();
+		t.commit();
 		return (Course[])list.toArray(courses);
 	}
 	
@@ -197,11 +195,12 @@ public class CourseApi extends BaseApi {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Course[] getStudentNotSelectedCourses(@PathParam("student_id") String student_id) {
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		String nested_query = "(select course from CourseStudent CS where CS.student_id='" + student_id + "')";
 		String query = "from Course C where C.id not in" + nested_query;
 		List<Course> list = (List<Course>)session.createQuery(query).list();
 		Course[] courses = new Course[list.size()];
-		session.close();
+		t.commit();
 		return (Course[])list.toArray(courses);
 	}
 	
@@ -209,15 +208,14 @@ public class CourseApi extends BaseApi {
 	@Path("/{course_id}/student/remove/{student_id}")
 	public String removeStudentFromCourse(@PathParam("student_id") String student_id,@PathParam("course_id") int course_id) {
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		String query = "from CourseStudent CS where CS.student_id='" + student_id + "' and CS.course=" + course_id;
 		List<CourseStudent> list = (List<CourseStudent>)session.createQuery(query).list();
 		if(list.size() > 0) {
-			Transaction t = session.beginTransaction();
 			CourseStudent cs = list.get(0);
 			session.delete(cs);
-			t.commit();
 		}
-		session.close();
+		t.commit();
 		return "200";
 	}
 

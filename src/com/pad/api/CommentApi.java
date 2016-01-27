@@ -27,9 +27,10 @@ public class CommentApi extends BaseApi{
 			@PathParam("pad_id") String pad_id
 	){
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		String query = "from Comment C where C.pad_id='" + pad_id + "'";
 		List<Comment> list = (List<Comment>)(session.createQuery(query).list());
-		session.close();
+		t.commit();
 		int size = list.size();
 		Comment[] comments = new Comment[size];
 		return (Comment[])(list.toArray(comments));
@@ -55,7 +56,6 @@ public class CommentApi extends BaseApi{
 		Transaction t = session.beginTransaction();
 		session.save(c);
 		t.commit();
-		session.close();
 		return "200";
 	}
 	
@@ -70,7 +70,6 @@ public class CommentApi extends BaseApi{
 		Comment c = (Comment)session.get(Comment.class, comment_id);
 		session.delete(c);
 		t.commit();
-		session.close();
 		return "200";
 	}
 	
@@ -85,7 +84,6 @@ public class CommentApi extends BaseApi{
 		Comment c = (Comment)session.get(Comment.class, comment_id);
 		session.save(c);
 		t.commit();
-		session.close();
 		return "200";
 	}
 }

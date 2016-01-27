@@ -28,10 +28,10 @@ public class MissionApi extends BaseApi{
 					@PathParam("pad_id") String pad_id
 			) {
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		Mission mission = (Mission)session.get(Mission.class, mission_id);
 		String query = "from MissionPad MS where MS.pad_id='" + pad_id + "'";
 		List<MissionPad> queryResult = (List<MissionPad>)session.createQuery(query).list();
-		Transaction t = session.beginTransaction();
 		if(queryResult.size() > 0) {
 			MissionPad originMissionPad = queryResult.get(0);
 			session.delete(originMissionPad);
@@ -41,7 +41,6 @@ public class MissionApi extends BaseApi{
 		newMissionPad.setPad_id(pad_id);
 		session.save(newMissionPad);
 		t.commit();
-		session.close();
 		return "200";
 	}
 	
@@ -64,7 +63,6 @@ public class MissionApi extends BaseApi{
 		mission.setEnd(end);
 		session.save(mission);
 		t.commit();
-		session.close();
 		return "200";
 	}
 	
@@ -73,10 +71,11 @@ public class MissionApi extends BaseApi{
 	@Produces(MediaType.APPLICATION_JSON)
 	public MissionPad[] listPads(@PathParam("mission_id") int mission_id) {
 		Session session = getSession();
+		Transaction t = session.beginTransaction();
 		Mission mission = (Mission)session.get(Mission.class, mission_id);
 		String query = "from MissionPad MS where MS.mission=" + mission_id;
 		List<MissionPad> list = (List<MissionPad>)session.createQuery(query).list();
-		session.close();
+		t.commit();
 		MissionPad[] missionPads = new MissionPad[list.size()];
 		return (MissionPad[])list.toArray(missionPads);
 	}
