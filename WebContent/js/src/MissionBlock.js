@@ -5,6 +5,7 @@ import FlatButton from 'material-ui/lib/flat-button';
 import RaisedButton from 'material-ui/lib/raised-button';
 import SelectField from 'material-ui/lib/select-field';
 import MenuItem from 'material-ui/lib/menus/menu-item';
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
 var $ = require("jquery");
 var _ = require("lodash");
@@ -103,6 +104,10 @@ var MissionBlock = React.createClass({
 			selectedMissionId : value 
 		});
 	},
+	toCourses : function() {
+		this.hideDialog();
+		window.open("/pad/courses.html");
+	},
 	render: function() {
 		const actions = [
 	      <FlatButton
@@ -129,9 +134,9 @@ var MissionBlock = React.createClass({
 
 		return (
 			<div>
-				<RaisedButton label="作业提交" onTouchTap={this.showDialog} primary={true} />
+				<RaisedButton label="提交文章" onTouchTap={this.showDialog} primary={true} />
 				<Dialog
-		          title="作业提交"
+		          title="提交文章"
 		          actions={actions}
 		          modal={false}
 		          open={this.state.isDialogShow}
@@ -150,6 +155,7 @@ var MissionBlock = React.createClass({
 					    	{missions}
 					    </SelectField>
 		          	</span>
+		          	<p>若课程不在列表中，可点<span style={{color : "#ff2263", cursor:"pointer"}} onClick={this.toCourses}>这里</span>添加</p>
 		          </div>
 		        </Dialog>
 			</div>
@@ -158,4 +164,5 @@ var MissionBlock = React.createClass({
 
 });
 
+injectTapEventPlugin();
 module.exports = MissionBlock;

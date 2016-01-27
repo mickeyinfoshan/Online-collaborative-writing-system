@@ -56948,7 +56948,7 @@
 					),
 					React.createElement(
 						"div",
-						{ style: { paddingTop: 20 } },
+						{ style: { paddingTop: 20, lineHeight: 1.5 } },
 						currentMission.content,
 						React.createElement(
 							"div",

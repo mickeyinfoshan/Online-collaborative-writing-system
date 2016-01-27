@@ -40378,6 +40378,10 @@
 
 	var _menuItem2 = _interopRequireDefault(_menuItem);
 
+	var _reactTapEventPlugin = __webpack_require__(238);
+
+	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var React = __webpack_require__(147);
@@ -40484,6 +40488,10 @@
 				selectedMissionId: value
 			});
 		},
+		toCourses: function toCourses() {
+			this.hideDialog();
+			window.open("/pad/courses.html");
+		},
 		render: function render() {
 			var actions = [React.createElement(_flatButton2.default, {
 				label: '取消',
@@ -40508,11 +40516,11 @@
 			return React.createElement(
 				'div',
 				null,
-				React.createElement(_raisedButton2.default, { label: '作业提交', onTouchTap: this.showDialog, primary: true }),
+				React.createElement(_raisedButton2.default, { label: '提交文章', onTouchTap: this.showDialog, primary: true }),
 				React.createElement(
 					_dialog2.default,
 					{
-						title: '作业提交',
+						title: '提交文章',
 						actions: actions,
 						modal: false,
 						open: this.state.isDialogShow,
@@ -40546,6 +40554,17 @@
 								React.createElement(_menuItem2.default, { value: -1, primaryText: '请选择' }),
 								missions
 							)
+						),
+						React.createElement(
+							'p',
+							null,
+							'若课程不在列表中，可点',
+							React.createElement(
+								'span',
+								{ style: { color: "#ff2263", cursor: "pointer" }, onClick: this.toCourses },
+								'这里'
+							),
+							'添加'
 						)
 					)
 				)
@@ -40554,6 +40573,7 @@
 
 	});
 
+	(0, _reactTapEventPlugin2.default)();
 	module.exports = MissionBlock;
 
 /***/ },
