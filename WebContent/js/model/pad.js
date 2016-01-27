@@ -45,7 +45,7 @@ define(function (require, exports, module) {
         setCookie: function (name, value, callback) {
             var data = {};
             data[name] = value;
-            this.getJSON("http://" + window.padDomainIP + "/session", data, callback);
+            this.getJSON(window.padDomainBasicURL + "/session", data, callback);
         },
         padUsers: function (padID, callback) {
             this.getJSON(seajs.padDomainApi + "padUsers", {apikey: seajs.apikey, "padID": padID}, callback);
