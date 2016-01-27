@@ -56696,9 +56696,19 @@
 				res.forEach(function (m) {
 					m.start = new Date(Number(m.start));
 					m.end = new Date(Number(m.end));
+					m.created_time = new Date(Number(m.created_time));
 				});
+				var currentMission = this.state.currentMission;
+				var currentIndex = _.findIndex(res, function (m) {
+					if (!currentMission) {
+						return false;
+					}
+					return currentMission.id == m.id;
+				});
+				var _currentMission = currentIndex < 0 ? null : res[currentIndex];
 				this.setState({
-					missions: res
+					missions: res,
+					currentMission: _currentMission
 				});
 			}.bind(this));
 		},
@@ -56783,6 +56793,7 @@
 		render: function render() {
 			var title = "课程作业";
 			var rightElement = React.createElement("span", null);
+			var _this = this;
 			var user = this.state.user;
 			if (user) {
 				var letter = user.name.charAt(0);
@@ -56808,7 +56819,7 @@
 					React.createElement(_menuItem2.default, { primaryText: "退出", onClick: window.close.bind(window) })
 				);
 			}
-			var _this = this;
+
 			var selectedCourseItems = this.state.selectedCourses.map(function (course) {
 				var key = "selectedCourse" + course.id;
 				return React.createElement(
@@ -56831,10 +56842,18 @@
 				);
 			});
 
-			var missionBlock = React.createElement(
+			if (this.state.missions.length == 0) {
+				missionItems = React.createElement(
+					_listItem2.default,
+					null,
+					"暂无作业"
+				);
+			}
+
+			var missionListBlock = React.createElement(
 				"div",
 				{ style: {
-						width: "30%",
+						width: "28%",
 						height: "100%",
 						borderRight: "solid 1px #ccc"
 					} },
@@ -56859,8 +56878,8 @@
 				)
 			);
 
-			if (this.state.missions.length == 0 || !this.state.currentCourse) {
-				missionBlock = "";
+			if (!this.state.currentCourse) {
+				missionListBlock = "";
 			}
 
 			var actions = [React.createElement(_flatButton2.default, {
@@ -56883,6 +56902,63 @@
 				return React.createElement(_menuItem2.default, { key: key, value: course.id, primaryText: text });
 			});
 
+			var missionDetailBlock = "";
+
+			function getDateStr(d) {
+				var year = d.getFullYear();
+				var month = d.getMonth() + 1;
+				var date = d.getDate();
+				return year + "-" + month + "-" + date;
+			}
+
+			if (this.state.currentMission && this.state.currentCourse) {
+				var currentMission = this.state.currentMission;
+				var start = getDateStr(currentMission.start);
+				var end = getDateStr(currentMission.end);
+				var dateNotifyStr = "";
+				var now = new Date();
+				if (now > currentMission.end) {
+					dateNotifyStr = "（已截止）";
+				}
+
+				if (now < currentMission.start) {
+					dateNotifyStr = "（未开始）";
+				}
+				var currentMissionCreateTime = getDateStr(currentMission.created_time);
+				missionDetailBlock = React.createElement(
+					"div",
+					{ style: { height: "100%", padding: 18, boxSizing: "border-box", width: "44%" } },
+					React.createElement(
+						"div",
+						{ style: { borderBottom: "solid 1px #ccc", paddingBottom: 15 } },
+						React.createElement(
+							"div",
+							{ style: { fontSize: 21, textAlign: "center", marginBottom: 15 } },
+							this.state.currentMission.name
+						),
+						React.createElement(
+							"div",
+							{ style: { textAlign: "right", fontSize: 15, color: "#aaa" } },
+							start,
+							"  -  ",
+							end,
+							"  ",
+							dateNotifyStr
+						)
+					),
+					React.createElement(
+						"div",
+						{ style: { paddingTop: 20 } },
+						currentMission.content,
+						React.createElement(
+							"div",
+							{ style: { textAlign: "right", fontSize: 15, color: "#aaa", marginTop: 50 } },
+							currentMissionCreateTime
+						)
+					)
+				);
+			}
+
 			return React.createElement(
 				"div",
 				{ style: { height: "100%" } },
@@ -56897,7 +56973,7 @@
 					React.createElement(
 						"div",
 						{ style: {
-								width: "30%",
+								width: "28%",
 								height: "100%",
 								borderRight: "solid 1px #ccc" } },
 						React.createElement(
@@ -56931,7 +57007,8 @@
 							selectedCourseItems
 						)
 					),
-					missionBlock
+					missionListBlock,
+					missionDetailBlock
 				),
 				React.createElement(
 					_dialog2.default,
@@ -56941,6 +57018,11 @@
 						modal: false,
 						open: this.state.addCourseDialog,
 						onRequestClose: this.hideAddCourseDialog },
+					React.createElement(
+						"span",
+						null,
+						"课程："
+					),
 					React.createElement(
 						_selectField2.default,
 						{ value: courseToAddValue, onChange: this.selectCourseToAdd },

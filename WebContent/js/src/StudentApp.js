@@ -102,9 +102,19 @@ var StudentApp = React.createClass({
 			res.forEach((m)=> {
 				m.start = new Date(Number(m.start));
 				m.end = new Date(Number(m.end));
+				m.created_time = new Date(Number(m.created_time));
 			});
+			var currentMission = this.state.currentMission;
+			var currentIndex = _.findIndex(res, function(m) {
+				if(!currentMission) {
+					return false;
+				}
+				return currentMission.id == m.id;
+			});
+			var _currentMission = currentIndex < 0 ? null : res[currentIndex];
 			this.setState({
-				missions : res 
+				missions : res,
+				currentMission : _currentMission 
 			});
 		}.bind(this))
 	},
@@ -189,6 +199,7 @@ var StudentApp = React.createClass({
 	render: function() {
 		var title = "课程作业";
 		var rightElement = <span></span>;
+		var _this = this;
 		var user = this.state.user;
 		if(user) {
 			var letter = user.name.charAt(0);
@@ -210,7 +221,7 @@ var StudentApp = React.createClass({
 	      		</IconMenu>
 			);
 		}
-		var _this = this;
+		
 		var selectedCourseItems = this.state.selectedCourses.map((course)=>{
 			var key = "selectedCourse" + course.id;
 			return <ListItem key={key} onClick={_this.selectCourse.bind(_this, course)}
@@ -227,9 +238,13 @@ var StudentApp = React.createClass({
 				   </ListItem>
 		});
 
-		var missionBlock = (
+		if(this.state.missions.length == 0) {
+			missionItems = <ListItem>暂无作业</ListItem>;
+		}
+
+		var missionListBlock = (
 			<div style={{
-						width : "30%",
+						width : "28%",
 						height : "100%",
 						borderRight: "solid 1px #ccc"
 					}}>
@@ -249,8 +264,8 @@ var StudentApp = React.createClass({
 					</div>
 		);
 
-		if(this.state.missions.length == 0 || !this.state.currentCourse) {
-			missionBlock = "";
+		if(!this.state.currentCourse) {
+			missionListBlock = "";
 		}
 
 		const actions = [
@@ -276,6 +291,43 @@ var StudentApp = React.createClass({
 			return <MenuItem key={key} value={course.id} primaryText={text} />
 		});
 
+		var missionDetailBlock = "";
+
+		function getDateStr(d) {
+			var year = d.getFullYear();
+			var month = d.getMonth() + 1;
+			var date = d.getDate();
+			return `${year}-${month}-${date}`;
+		}
+
+		if(this.state.currentMission && this.state.currentCourse) {
+			var currentMission = this.state.currentMission;
+			var start = getDateStr(currentMission.start);
+			var end = getDateStr(currentMission.end);
+			var dateNotifyStr = "";
+			var now = new Date();
+			if(now > currentMission.end) {
+				dateNotifyStr = "（已截止）";
+			}
+
+			if(now < currentMission.start) {
+				dateNotifyStr = "（未开始）";
+			}
+			var currentMissionCreateTime = getDateStr(currentMission.created_time);
+			missionDetailBlock = (
+				<div style={{height : "100%" , padding : 18, boxSizing : "border-box", width : "44%"}}>
+					<div style={{borderBottom : "solid 1px #ccc", paddingBottom : 15}}>
+						<div style={{fontSize : 21, textAlign : "center", marginBottom : 15}}>{this.state.currentMission.name}</div>
+						<div style={{textAlign : "right", fontSize : 15, color : "#aaa"}}>{start}  -  {end}  {dateNotifyStr}</div>
+					</div>
+					<div style={{paddingTop : 20}}>
+						{currentMission.content}
+						<div style={{textAlign : "right", fontSize : 15, color : "#aaa", marginTop : 50}}>{currentMissionCreateTime}</div>
+					</div>
+				</div>
+			);
+		}
+
 		return (
 			<div style={{height : "100%"}}>
 				<AppBar
@@ -285,7 +337,7 @@ var StudentApp = React.createClass({
 				/>
 				<div style={{height : "calc(100% - 64px)", display : "flex"}}>
 					<div style={{
-								width : "30%", 
+								width : "28%", 
 								height : "100%", 
 								borderRight: "solid 1px #ccc"}}>
 						<div style={{display : "flex", 
@@ -309,7 +361,8 @@ var StudentApp = React.createClass({
 							{selectedCourseItems}
 						</List>
 					</div>
-					{missionBlock}
+					{missionListBlock}
+					{missionDetailBlock}
 				</div>
 				<Dialog
 		          title="添加课程"
@@ -317,7 +370,7 @@ var StudentApp = React.createClass({
 		          modal={false}
 		          open={this.state.addCourseDialog}
 		          onRequestClose={this.hideAddCourseDialog}>
-
+		           <span>课程：</span>
 		           <SelectField value={courseToAddValue} onChange={this.selectCourseToAdd}>
 		           	<MenuItem value={-1} primaryText="请选择"/>
 		           	{notSelectedCourseItems}
