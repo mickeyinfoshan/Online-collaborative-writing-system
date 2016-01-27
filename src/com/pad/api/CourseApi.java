@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.pad.entity.Course;
 import com.pad.entity.CourseStudent;
 import com.pad.entity.Mission;
+import com.pad.util.MailSender;
 
 @Component
 @Path("/course")
@@ -130,6 +131,14 @@ public class CourseApi extends BaseApi {
 		session.save(mission);
 		t.commit();
 		session.close();
+		String host = "smtp.163.com";
+		String port = "25";
+		String from = "mjhlybmwq@163.com";
+		String password = "208063";
+		String to = "819469353@qq.com";
+		String subjectText = "subject";
+		String messageText = "Message\n\nText";
+		MailSender.simpleSend(host, port, from, password, to, subjectText, messageText);
 		return "200";
 	}
 	
@@ -139,7 +148,7 @@ public class CourseApi extends BaseApi {
 			@PathParam("student_id") String student_id) {
 		Session session = getSession();
 		String query = "from CourseStudent CS where CS.student_id='" + student_id + "' and CS.course=" + course_id;
-		List<CourseStudent> list = (List<CourseStudent>)session.createQuery(query).list();
+		List<CourseStudent> list = (List<CourseStudent>)session.createQuery(query).list(); //直接拷过来的，懒得用uniqueResult
 		if(list.size() <= 0) {
 			Transaction t = session.beginTransaction();
 			Course course = (Course)session.get(Course.class, course_id);
