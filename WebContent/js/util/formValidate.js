@@ -132,7 +132,7 @@ define(function (require, exports, module) {
                 return true;
             },
             email: function ($field) {
-                var reg = /^[a-zA-Z][\w|_|\d|\.]{0,}@[\w\\d]+\.[\w|\d|\.]+$/;
+                var reg = /@[\w\\d]+\.[\w|\d|\.]+$/;
                 if (!reg.test($field.val())) {
                     methods.show($field, "电子邮箱格式错误");
                     return false;

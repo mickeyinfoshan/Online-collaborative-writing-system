@@ -11,17 +11,23 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.pad.entity.Course;
 import com.pad.entity.CourseStudent;
 import com.pad.entity.Mission;
 import com.pad.util.MailSender;
+import com.pad.util.MailThread;
 
 @Component
 @Path("/course")
 public class CourseApi extends BaseApi {
+	
+	@Autowired
+	private SessionFactory mysf;
 	
 	@GET
 	@Path("/teacher/{teacher_id}/list")
@@ -108,6 +114,7 @@ public class CourseApi extends BaseApi {
 		return (Mission[])list.toArray(missions);
 	}
 
+	//Awful one!!!!!
 	@POST
 	@Path("/{course_id}/mission/create")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -130,15 +137,14 @@ public class CourseApi extends BaseApi {
 		Transaction t = session.beginTransaction();
 		session.save(mission);
 		t.commit();
+		String query = "select student_id from CourseStudent cs where cs.course=" + course_id;
+		List<String> receivers = (List<String>)session.createQuery(query).list();
 		session.close();
-		String host = "smtp.163.com";
-		String port = "25";
-		String from = "mjhlybmwq@163.com";
-		String password = "208063";
-		String to = "819469353@qq.com";
-		String subjectText = "subject";
-		String messageText = "Message\n\nText";
-		MailSender.simpleSend(host, port, from, password, to, subjectText, messageText);
+		MailThread mt = new MailThread();
+		mt.setMission(mission);
+		mt.setSessionFactory(mysf);
+		mt.setReceivers(receivers);
+		mt.start();
 		return "200";
 	}
 	
@@ -212,5 +218,13 @@ public class CourseApi extends BaseApi {
 		}
 		session.close();
 		return "200";
+	}
+
+	public SessionFactory getMysf() {
+		return mysf;
+	}
+
+	public void setMysf(SessionFactory mysf) {
+		this.mysf = mysf;
 	}
 }
