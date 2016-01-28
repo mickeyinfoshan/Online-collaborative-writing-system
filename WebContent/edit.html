@@ -23,6 +23,7 @@
     <div class="headName small_head_name"></div>
     <div class="nav">
         <a class="nav_item" href="index.html" target="home_window">主页</a>
+        <a class="nav_item" id="to_course_mission">课程任务</a>
         <a class="nav_item" id="get_report">报表</a>
         <a class="nav_item" id="change_pad">选择文章</a>
         <a class="nav_item" href="help.html" target="help_window">帮助</a>
@@ -119,6 +120,10 @@
                 $("#get_report").click(function () {
                     window.edit = window.opener.edit;
                     window.open("report.html", "report_window");
+                });
+
+                $("#to_course_mission").click(function () {
+                    window.open("courses.html");
                 });
             })();
 
