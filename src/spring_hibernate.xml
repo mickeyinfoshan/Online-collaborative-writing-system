@@ -49,6 +49,7 @@
        			<value>com.pad.entity.Mission</value>
        			<value>com.pad.entity.MissionPad</value>
        			<value>com.pad.entity.CourseStudent</value>
+       			<value>com.pad.entity.PublicPad</value>
      		</list>
  		</property>
 		<property name="hibernateProperties">
