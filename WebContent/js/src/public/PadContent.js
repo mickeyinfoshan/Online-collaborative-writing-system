@@ -1,8 +1,6 @@
 var React = require('react');
 var $ = require("jquery");
-var {Base} = require("../data-station/index");
-var selectedPad = require("../models/selectedPad");
-var padServer = require("../utils/padServer");
+var padServer = require("./padServer");
 
 var PadContent = React.createClass({
 	
@@ -13,20 +11,21 @@ var PadContent = React.createClass({
 	},
 
 	componentDidMount: function() {
-		this.ds = new Base();
-		this.ds.addSource(selectedPad, "SelectedPad.change");
-		var _this = this;
-		this.ds.addHandler(function() {
-			_this.getContent();
-		}, "SelectedPad.change");
+		this.getContent();
+	},
+
+	componentDidUpdate: function(prevProps, prevState) {
+		if(prevProps.pad_id != this.props.pad_id) {
+			this.getContent();
+		}
 	},
 
 	getContent : function() {
-		if(!selectedPad.pad) {
+		if(!this.props.pad_id) {
 			return;
 		}
 		var _this = this;
-		var pad_id = selectedPad.pad.pad_id;
+		var pad_id = this.props.pad_id;
 		var url = padServer.getRequestUrl("getHTML", {padID : pad_id});
 		$.getJSON(url, function(res) {
 			if(res.message == "ok") {
@@ -41,8 +40,8 @@ var PadContent = React.createClass({
 	render: function() {
 		var content = this.state.content || "暂无内容";
 		var name = "";
-		if(selectedPad.pad) {
-			name = selectedPad.pad.pad_id.split("$")[1];
+		if(this.props.pad_id) {
+			name = this.props.pad_id.split("$")[1];
 		}
 		return (
 			<div style={{borderBottom : "solid 1px #ccc"}}>
