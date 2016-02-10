@@ -19,6 +19,7 @@
         <a class="nav_item" href="index.html" target="home_window">主页</a>
         <a class="nav_item" href="help.html" target="help_window">帮助</a>
         <a class="nav_item" href="about.html" target="about_window">关于</a>
+        <a class="nav_item" id="to_course_mission">课程任务</a>
         <span class="username"></span>
     </div>
 </div>
@@ -96,6 +97,9 @@ seajs.use(
                     window.edit = window.opener.edit;
                 }
                 $("body").on("load", function () {
+                    $("#to_course_mission").click(function () {
+                        window.open("courses.html");
+                    });
                     $(".username").text("当前用户:" + $.user.name);
                     //权限管理
                     (function () {
