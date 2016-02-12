@@ -19,6 +19,8 @@ import Dialog from 'material-ui/lib/dialog';
 import FlatButton from 'material-ui/lib/flat-button';
 import SelectField from 'material-ui/lib/select-field';
 
+var PublicBlock = require("./public/PublicBlock");
+
 var StudentApp = React.createClass({
 
 	getInitialState: function() {
@@ -314,6 +316,7 @@ var StudentApp = React.createClass({
 				dateNotifyStr = "（未开始）";
 			}
 			var currentMissionCreateTime = getDateStr(currentMission.created_time);
+			var publicPadUrl = `/pad/api/public/pad/mission/${currentMission.id}`;
 			missionDetailBlock = (
 				<div style={{height : "100%" , padding : 18, boxSizing : "border-box", width : "44%"}}>
 					<div style={{borderBottom : "solid 1px #ccc", paddingBottom : 15}}>
@@ -323,6 +326,12 @@ var StudentApp = React.createClass({
 					<div style={{paddingTop : 20, lineHeight : 1.5}}>
 						{currentMission.content}
 						<div style={{textAlign : "right", fontSize : 15, color : "#aaa", marginTop : 50}}>{currentMissionCreateTime}</div>
+					</div>
+					<div style={{borderTop : "solid 1px #ccc"}}>
+						<p>该作业公开的文章</p>
+						<div>
+							<PublicBlock url={publicPadUrl} />
+						</div>
 					</div>
 				</div>
 			);

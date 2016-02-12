@@ -87,4 +87,18 @@ public class PublicPadApi extends BaseApi {
 		t.commit();
 		return "200";
 	}
+	
+	@GET
+	@Path("/mission/{mission_id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public PublicPad[] getPublicPadsByMission(@PathParam("mission_id") int mission_id) {
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		String nested_query = "(select pad_id from MissionPad mp where mp.mission=" + mission_id + ")";
+		String query = "from PublicPad pp where pp.pad_id in " + nested_query;
+		List<PublicPad> list = (List<PublicPad>)session.createQuery(query).list();
+		PublicPad[] publicPads = new PublicPad[list.size()];
+		t.commit();
+		return (PublicPad[])list.toArray(publicPads);
+	}
 }

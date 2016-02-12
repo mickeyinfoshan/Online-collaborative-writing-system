@@ -65,7 +65,7 @@ var CommentInput = React.createClass({
 	},
 
 	render : function() {
-		return (<div>
+		return (<div style={{paddingLeft : 20}}>
 			<TextField ref="textInput" 
 				multiLine={true} 
 				floatingLabelText={"新的评语"}  
@@ -73,6 +73,7 @@ var CommentInput = React.createClass({
 				value={this.state.content}
 				onChange={this.setContent}
 			/>
+			<br />
 			<FlatButton
         label="发表"
         primary={true}

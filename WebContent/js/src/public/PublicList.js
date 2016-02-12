@@ -1,5 +1,5 @@
 var React = require('react');
-var $ = require("$");
+var $ = require("jquery");
 var PadItem = require("./PadItem");
 import List from 'material-ui/lib/lists/list';
 
@@ -9,6 +9,10 @@ var PublicList = React.createClass({
 		return {
 			pads : [] 
 		};
+	},
+
+	componentDidMount: function() {
+		this.getPads();
 	},
 
 	getPads : function() {
