@@ -28,7 +28,7 @@ seajs.config({
 
     }
 });
-window.padDomainIP = "localhost";
+window.padDomainIP = "121.40.97.89";
 window.padDomainPort = "8081"
 window.padDomainBasicURL = "http://" + window.padDomainIP + ":" + padDomainPort;
 seajs.padDomainApi = window.padDomainBasicURL + "/api/1.2.10/";
