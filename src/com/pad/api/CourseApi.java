@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import com.pad.entity.Course;
 import com.pad.entity.CourseStudent;
 import com.pad.entity.Mission;
-import com.pad.util.MailSender;
 import com.pad.util.MailThread;
 
 @Component

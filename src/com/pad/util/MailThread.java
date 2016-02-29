@@ -16,7 +16,7 @@ public class MailThread extends Thread {
 	private String host = "smtp.163.com";
 	private String port = "25";
 	private String from = "mjhlybmwq@163.com";
-	private String password = "208063";
+	private String password = "208063mjhlyb";
 	private String subjectText = "新任务提醒";
 	private Mission mission;
 	private List<String> receivers;
@@ -66,6 +66,7 @@ public class MailThread extends Thread {
 		String endString = df.format(end);
 		text = text + "时间：" + startString + "  -  " + endString + "\n";
 		text = text + "作业内容：" + mission.getContent() + "\n";
+		text = text + "<a href='http://121.40.97.89:8080/pad'>跳转链接</a>";
 		return text;
 	}
 	public String getSubjectText() {

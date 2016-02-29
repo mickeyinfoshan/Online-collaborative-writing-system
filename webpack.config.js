@@ -1,4 +1,5 @@
 var path = require("path");
+var webpack = require("webpack");
 module.exports = {
     entry : {edit : "./WebContent/js/src/edit.js",
               teacher : "./WebContent/teacher/js/src/index.js",
@@ -26,5 +27,10 @@ module.exports = {
       chunkFilename: "[chunkhash].js"
     },
     watch : false,
-    plugins : []
+    plugins : [
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.OccurenceOrderPlugin(),
+        new webpack.optimize.AggressiveMergingPlugin(),
+        new webpack.NoErrorsPlugin(),
+    ]
 };
