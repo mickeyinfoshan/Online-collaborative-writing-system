@@ -16,10 +16,14 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.github.kevinsawicki.http.HttpRequest;
 import com.pad.entity.Course;
+import com.pad.entity.CoursePadGroup;
 import com.pad.entity.CourseStudent;
 import com.pad.entity.Mission;
+import com.pad.entity.MissionPad;
 import com.pad.util.MailThread;
+import com.pad.util.PadServerApi;
 
 @Component
 @Path("/course")
@@ -137,6 +141,26 @@ public class CourseApi extends BaseApi {
 		String query = "select student_id from CourseStudent cs where cs.course=" + course_id;
 		List<String> receivers = (List<String>)session.createQuery(query).list();
 		t.commit();
+		//create pad
+		String coursePadGroupQuery = "select padGroupId from CoursePadGroup cpg where cpg.course=" + course_id;
+		List<String> groupIds = (List<String>)session.createQuery(coursePadGroupQuery).list();
+		for(int i = 0; i < groupIds.size(); i++) {
+			String groupId = groupIds.get(i);
+			String padName = "mission" + mission.getName() + "-小组" +i;
+			String url = PadServerApi.getBaseRequestUrl("createGroupPad");
+			url += "&groupID=" + groupId;
+			url += "&padName=" + padName;
+			url += "&text=" + mission.getContent();
+			HttpRequest.get(url);
+			String padId = groupId + "$" + padName;
+			MissionPad mp = new MissionPad();
+			mp.setMission(mission);
+			mp.setPad_id(padId);
+			Transaction _t = session.beginTransaction();
+			session.save(mp);
+			_t.commit();
+		}
+		
 		MailThread mt = new MailThread();
 		mt.setMission(mission);
 		mt.setSessionFactory(mysf);
@@ -181,7 +205,8 @@ public class CourseApi extends BaseApi {
 	public Course[] getStudentSelectedCourses(@PathParam("student_id") String student_id) {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
-		String query = "select course from CourseStudent CS where CS.student_id='" + student_id + "'";
+		String nestedQuery = "(select padGroupId from PadGroupUser PGU where PGU.user_id='" + student_id + "')";
+		String query = "select course from CoursePadGroup CPG where CPG.padGroupId in" + nestedQuery;
 		List<Course> list = (List<Course>)session.createQuery(query).list();
 		Course[] courses = new Course[list.size()];
 		t.commit();
