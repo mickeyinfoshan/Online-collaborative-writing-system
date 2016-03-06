@@ -50,6 +50,8 @@
        			<value>com.pad.entity.MissionPad</value>
        			<value>com.pad.entity.CourseStudent</value>
        			<value>com.pad.entity.PublicPad</value>
+       			<value>com.pad.entity.CoursePadGroup</value>
+       			<value>com.pad.entity.PadGroupUser</value>
      		</list>
  		</property>
 		<property name="hibernateProperties">

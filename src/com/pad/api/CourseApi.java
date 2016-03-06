@@ -14,7 +14,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.usermodel.Header;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -28,6 +35,7 @@ import com.pad.entity.CoursePadGroup;
 import com.pad.entity.CourseStudent;
 import com.pad.entity.Mission;
 import com.pad.entity.MissionPad;
+import com.pad.entity.PadGroupUser;
 import com.pad.entity.User;
 import com.pad.util.MailThread;
 import com.pad.util.PadServerApi;
@@ -148,7 +156,6 @@ public class CourseApi extends BaseApi {
 		String nestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" +  course_id + "')";
 		String query = "select user from PadGroupUser PGU where PGU.padGroupId in " + nestedQuery;
 		List<String> receivers = (List<String>)session.createQuery(query).list();
-		t.commit();
 		//create pad
 		String coursePadGroupQuery = "select padGroupId from CoursePadGroup cpg where cpg.course=" + course_id;
 		List<String> groupIds = (List<String>)session.createQuery(coursePadGroupQuery).list();
@@ -164,11 +171,9 @@ public class CourseApi extends BaseApi {
 			MissionPad mp = new MissionPad();
 			mp.setMission(mission);
 			mp.setPad_id(padId);
-			Transaction _t = session.beginTransaction();
 			session.save(mp);
-			_t.commit();
 		}
-		
+		t.commit();
 		MailThread mt = new MailThread();
 		mt.setMission(mission);
 		mt.setSessionFactory(mysf);
@@ -254,15 +259,59 @@ public class CourseApi extends BaseApi {
 	@POST
 	@Path("/{course_id}/student/import")
 	@Consumes({MediaType.MULTIPART_FORM_DATA})
-	public String importStudents(@PathParam("course_id") int course_id, @FormDataParam("file") InputStream fileInputStream) {
-		try{
-			String myString = IOUtils.toString(fileInputStream, "UTF-8");
-			return myString;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return "read error";
+	public String importStudents(@PathParam("course_id") int course_id, @FormDataParam("file") InputStream fileInputStream) throws IOException {
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		Session _session = mysf.openSession();
+		Course course = (Course)session.get(Course.class, course_id);
+		XSSFWorkbook wb = new XSSFWorkbook(fileInputStream);
+		XSSFSheet sheet = wb.getSheetAt(0);
+		int lastRowIndex = sheet.getLastRowNum();
+		int i = 1;
+		while(i <= lastRowIndex) {
+			int groupMemberCount = 1;
+			int currentRow = i + 1;
+			while(currentRow <= lastRowIndex && sheet.getRow(currentRow).getCell(0).getStringCellValue().isEmpty()) {
+				System.out.println("currentRow:" + currentRow);
+				System.out.println(sheet.getRow(currentRow).getCell(0).getStringCellValue());
+				currentRow++;
+				groupMemberCount++;
+			}
+			CoursePadGroup coursePadGroup = new CoursePadGroup(course);
+			session.save(coursePadGroup);
+			System.out.println(groupMemberCount + "");
+			System.out.println(i + "");
+			for(currentRow = i; currentRow < i + groupMemberCount; currentRow++) {
+				Row row = sheet.getRow(currentRow);
+				String name = row.getCell(1).getStringCellValue();
+				String studentNumber = row.getCell(2).getStringCellValue();
+				String email = row.getCell(3).getStringCellValue();
+				Query getExistUserQuery = _session.createQuery(
+						"from User where username=:name ");
+				getExistUserQuery.setString("name", email);
+				User user = (User)getExistUserQuery.uniqueResult();
+				//用户不存在 创建用户
+				if(user == null) {
+					user = new User();
+					user.setName(name);
+					user.setUsername(email);
+					user.setPassword(studentNumber);
+					user.setStudentNumber(studentNumber);
+					Transaction _t = _session.beginTransaction();
+					_session.save(user);
+					_t.commit();
+					user.initPadUser();
+				}
+				PadGroupUser padGroupUser = new PadGroupUser();
+				padGroupUser.setUser(user.getAuthorId());
+				padGroupUser.setPadGroupId(coursePadGroup.getPadGroupId());
+				session.save(padGroupUser);
+			}
+			i += groupMemberCount;
 		}
+		t.commit();
+		_session.close();
+		return "200";
 	}
 	
 	@GET
