@@ -1,5 +1,7 @@
 package com.pad.api;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
@@ -95,7 +97,7 @@ public class MissionApi extends BaseApi{
 	@GET
 	@Path("/{mission_id}/pad/for/{user_id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public String getMissionPadForUser(@PathParam("mission_id") int mission_id, @PathParam("user_id") String user_id) {
+	public String getMissionPadForUser(@PathParam("mission_id") int mission_id, @PathParam("user_id") String user_id) throws UnsupportedEncodingException {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
 		Mission mission = (Mission)session.get(Mission.class, mission_id);
@@ -106,7 +108,9 @@ public class MissionApi extends BaseApi{
 		String url = PadServerApi.getBaseRequestUrl("listPads");
 		url += "&groupID=" + padGroupId;
 		String resString = HttpRequest.get(url).body();
-		JSONArray json_padIds = JSON.parseObject(resString).getJSONObject("data").getJSONArray("groupIDs");
+		System.out.println(resString);
+		JSONArray json_padIds = JSON.parseObject(resString).getJSONObject("data").getJSONArray("padIDs");
+		System.out.println(json_padIds.toJSONString());
 		String getPadQuery = "select pad_id from MissionPad MP where MP.mission=" + mission.getId() + "and MP.pad_id in (:padIds)";
 		String padId = (String)session.createQuery(getPadQuery).setParameterList("padIds", json_padIds.toArray()).uniqueResult();
 		t.commit();
@@ -118,7 +122,7 @@ public class MissionApi extends BaseApi{
 		_session.close();
 		String padUserUrl = PadServerApi.getBaseRequestUrl("createAuthorIfNotExistsFor");
 		padUserUrl += "&authorMapper=" + user_id;
-		padUserUrl += "&name=" + user.getName();
+		padUserUrl += "&name=" + URLEncoder.encode(user.getName(), "UTF-8");
 		String _resString = HttpRequest.get(padUserUrl).body();
 		JSONObject _res = JSON.parseObject(_resString);
 		String authorId = _res.getJSONObject("data").getString("authorID");

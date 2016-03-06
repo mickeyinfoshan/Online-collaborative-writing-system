@@ -2,6 +2,8 @@ package com.pad.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -28,6 +30,7 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.pad.entity.Course;
@@ -141,7 +144,7 @@ public class CourseApi extends BaseApi {
 			@FormParam(value="end") String end,
 			@FormParam(value="created_time") String created_time,
 			@FormParam(value="content") String content
-		) {
+		) throws UnsupportedEncodingException {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
 		Course course = (Course)session.get(Course.class, course_id);
@@ -164,10 +167,9 @@ public class CourseApi extends BaseApi {
 			String padName = "mission" + mission.getName() + "-小组" +i;
 			String url = PadServerApi.getBaseRequestUrl("createGroupPad");
 			url += "&groupID=" + groupId;
-			url += "&padName=" + padName;
-			url += "&text=" + mission.getContent();
-			HttpRequest.get(url);
-			String padId = groupId + "$" + padName;
+			url += "&padName=" + URLEncoder.encode(padName, "UTF-8");
+			url += "&text=" + URLEncoder.encode(mission.getContent(), "UTF-8");
+			String padId = JSON.parseObject(HttpRequest.get(url).body()).getJSONObject("data").getString("padID");
 			MissionPad mp = new MissionPad();
 			mp.setMission(mission);
 			mp.setPad_id(padId);
@@ -206,7 +208,8 @@ public class CourseApi extends BaseApi {
 	public int countStudnet(@PathParam("course_id") int course_id) {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
-		String query = "select count(*) from CourseStudent CS where CS.course=" + course_id;
+		String nestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" + course_id + "')";
+		String query = "select count(*) from PadGroupUser PGU where PGU.padGroupId in " + nestedQuery;
 		int count = ((Long)session.createQuery(query).uniqueResult()).intValue();
 		t.commit();
 		return count;
