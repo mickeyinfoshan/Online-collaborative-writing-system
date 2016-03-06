@@ -34,17 +34,9 @@ class UserChatStatic {
 
 
 public class ChatStatic {
-	private static String padHost = "121.40.97.89";
-	private static String padPort = "8081";
-	private static String padApiKey = "8f2f95ba0babc4a151d970b8acfbc00869cf3dce5b5ca6893343303d86049cd8";
-	
-	private static String getBaseRequestUrl(String method) {
-		String protocal = "http";
-		return protocal + "://" + padHost + ":" + padPort + "/api/1.2.10/" + method + "?apikey=" + padApiKey;
-	}
 	
 	public static JSONArray listAllPads() {
-		JSONObject res = JSON.parseObject(HttpRequest.get(getBaseRequestUrl("listAllPads")).body());
+		JSONObject res = JSON.parseObject(HttpRequest.get(PadServerApi.getBaseRequestUrl("listAllPads")).body());
 		if(res.getInteger("code") == 0) {
 			JSONObject data = res.getJSONObject("data");
 			JSONArray padIDs = data.getJSONArray("padIDs");
@@ -54,7 +46,7 @@ public class ChatStatic {
 	}
 	
 	private static String getChatHistoryUrl(String padId) {
-		return getBaseRequestUrl("getChatHistory") + "&padID=" + padId;
+		return PadServerApi.getBaseRequestUrl("getChatHistory") + "&padID=" + padId;
 	}
 	
 	public static JSONArray getChatHistory(String padId) {
@@ -70,7 +62,7 @@ public class ChatStatic {
 	
 	public static JSONObject getPadChatStatic(String padId) {
 		JSONObject result = new JSONObject();
-		result.put("padId", padId);
+		//result.put("padId", padId);
 		JSONObject statics = new JSONObject();
 		JSONArray messages = getChatHistory(padId);
 		for(int i = 0; i < messages.size(); i++) {
@@ -92,7 +84,7 @@ public class ChatStatic {
 				statics.put(userId, u);
 			}
 		}
-		result.put("statics", statics);
+		result.put(padId, statics);
 		return result;
 	}
 }
