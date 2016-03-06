@@ -147,6 +147,8 @@ input {
     float: left;
     padding-top: 10px;
     font-size: 20px;
+    opacity: 0;
+    display: none;
 }
 
 .nav {

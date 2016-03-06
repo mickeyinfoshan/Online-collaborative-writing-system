@@ -14,7 +14,8 @@ var SelectedCourseBlock = React.createClass({
 
 	getInitialState: function() {
 		return {
-			studentCount : 0 
+			studentCount : 0,
+			importing : false
 		};
 	},
 
@@ -36,7 +37,7 @@ var SelectedCourseBlock = React.createClass({
 		var url = server + `/pad/api/course/${selectedCourse.course.id}/student/count`;
 		$.get(url, function(res) {
 			this.setState({
-				studentCount : res 
+				studentCount : Number(res) 
 			});
 		}.bind(this));
 	},
@@ -54,7 +55,35 @@ var SelectedCourseBlock = React.createClass({
 		});
 
 	},
-
+	importStudents : function() {
+		var formData = new FormData();
+		this.setState({
+			importing : true 
+		});
+		var _this = this;
+		formData.append('file', $('input[type=file]')[0].files[0]);
+		var url = `/pad/api/course/${selectedCourse.course.id}/student/import/`;
+		$.ajax({
+			url : url,
+			data: formData,
+			contentType: false,
+    		processData: false,
+    		method : "POST"
+		}).done(function(res) {
+			if(res == "200") {
+				_this.setState({
+					importing : false 
+				});
+				_this.getStudentCount();
+				alert("导入成功");
+			}
+		}).fail(function(){
+			_this.setState({
+				importing : false 
+			});
+			alert("导入失败");
+		});
+	},
 	render: function() {
 		if(!selectedCourse.course) {
 			return <div />;	
@@ -64,11 +93,21 @@ var SelectedCourseBlock = React.createClass({
 		var month = created_time.getMonth() + 1;
 		var day = created_time.getDate();
 		created_time = `${year}-${month}-${day}`;
+		var importStudentButton = (
+			<p>
+				<input type="file" name="file" id="studentFileInput"/>
+				<button onClick={this.importStudents}>导入学生</button>
+			</p>);
+		var studentCountText = <p>学生选课：{this.state.studentCount}人</p>;
+		var studentBlock = this.state.studentCount > 0 ? studentCountText : importStudentButton;
+		if(this.state.importing) {
+			studentBlock = "导入学生中，请稍后"
+		}
 		return (
 			<div style={{paddingLeft : 28}}>
 				<h4>课程名称：{selectedCourse.course.name}</h4>
 				<p>创建时间：{created_time}</p>
-				<p>学生选课：{this.state.studentCount}人</p>
+				{studentBlock}
 				<p>
 					<FlatButton label="编辑" secondary={true} onClick={()=>{dialogController.show("course", "update")}} />
 				</p>

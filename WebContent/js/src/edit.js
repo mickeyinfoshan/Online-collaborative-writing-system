@@ -6,5 +6,5 @@ var MissionBlock = require("./MissionBlock");
 var PublicButton = require("./PublicButton");
 
 ReactDOM.render(<CommentBlock />, document.getElementById('commentBlock'));
-ReactDOM.render(<MissionBlock />, document.getElementById("missionBlock"));
+//ReactDOM.render(<MissionBlock />, document.getElementById("missionBlock"));
 ReactDOM.render(<PublicButton />, document.getElementById("publicButton"));

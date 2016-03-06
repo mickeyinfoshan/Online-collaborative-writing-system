@@ -221,7 +221,7 @@ public class CourseApi extends BaseApi {
 	public Course[] getStudentSelectedCourses(@PathParam("student_id") String student_id) {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
-		String nestedQuery = "(select padGroupId from PadGroupUser PGU where PGU.user_id='" + student_id + "')";
+		String nestedQuery = "(select padGroupId from PadGroupUser PGU where PGU.user='" + student_id + "')";
 		String query = "select course from CoursePadGroup CPG where CPG.padGroupId in" + nestedQuery;
 		List<Course> list = (List<Course>)session.createQuery(query).list();
 		Course[] courses = new Course[list.size()];

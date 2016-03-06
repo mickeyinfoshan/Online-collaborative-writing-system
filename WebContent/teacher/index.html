@@ -4,14 +4,25 @@
 		<meta charset="utf-8">
 		<title>作业管理</title>
 		<style type="text/css">
-			html,body {
-				margin: 0;
+			html, body, #body {
+				margin : 0;
 				padding: 0;
+				height: 100%;
+				box-sizing : border-box;
+			}
+			#loading {
+				font-size: 24;
+				text-align: center;
+				margin-top: 60;
 			}
 		</style>
 	</head>
 	<body>
-		<div id="app"></div>
+		<div id="app">
+			<div id="loading">
+				加载中，请稍等
+			</div>
+		</div>
 		<script type="text/javascript" src="/pad/js/dist/teacher.js"></script>
 	</body>
 </html>
