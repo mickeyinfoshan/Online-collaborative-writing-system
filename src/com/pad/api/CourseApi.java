@@ -1,7 +1,10 @@
 package com.pad.api;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -10,18 +13,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.io.IOUtils;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.alibaba.fastjson.JSONArray;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.pad.entity.Course;
 import com.pad.entity.CoursePadGroup;
 import com.pad.entity.CourseStudent;
 import com.pad.entity.Mission;
 import com.pad.entity.MissionPad;
+import com.pad.entity.User;
 import com.pad.util.MailThread;
 import com.pad.util.PadServerApi;
 
@@ -138,7 +145,8 @@ public class CourseApi extends BaseApi {
 		mission.setCreated_time(created_time);
 		mission.setContent(content);
 		session.save(mission);
-		String query = "select student_id from CourseStudent cs where cs.course=" + course_id;
+		String nestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" +  course_id + "')";
+		String query = "select user from PadGroupUser PGU where PGU.padGroupId in " + nestedQuery;
 		List<String> receivers = (List<String>)session.createQuery(query).list();
 		t.commit();
 		//create pad
@@ -243,6 +251,44 @@ public class CourseApi extends BaseApi {
 		return "200";
 	}
 
+	@POST
+	@Path("/{course_id}/student/import")
+	@Consumes({MediaType.MULTIPART_FORM_DATA})
+	public String importStudents(@PathParam("course_id") int course_id, @FormDataParam("file") InputStream fileInputStream) {
+		try{
+			String myString = IOUtils.toString(fileInputStream, "UTF-8");
+			return myString;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "read error";
+		}
+	}
+	
+	@GET
+	@Path("/{course_id}/student/{user_id}/members")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String getUserGroupMembers(@PathParam("course_id") int course_id, @PathParam("user_id") String user_id) {
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		Course course = (Course)session.get(Course.class, course_id);
+		String getPadGroupNestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" + course.getId() + "')";
+		String getPadGroupQuery = "select padGroupId from PadGroupUser PGU where PGU.user='" + user_id + "' and PGU.padGroupId in " + getPadGroupNestedQuery;
+		String padGroupId = (String)session.createQuery(getPadGroupQuery).uniqueResult();
+		String getUsersQuery = "select user from PadGroupUser PGU where PGU.padGroupId='" + padGroupId + "'";
+		List<String> userIdList = (List<String>)session.createQuery(getUsersQuery).list();
+		JSONArray result = new JSONArray();
+		Session _session = mysf.openSession();
+		for(int i = 0; i < userIdList.size(); i++) {
+			String userId = userIdList.get(i);
+			User u = (User)_session.get(User.class, userId);
+			result.add(u);
+		}
+		_session.close();
+		t.commit();
+		return result.toJSONString();
+	}
+	
 	public SessionFactory getMysf() {
 		return mysf;
 	}
