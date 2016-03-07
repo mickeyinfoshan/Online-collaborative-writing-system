@@ -16,6 +16,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -271,12 +272,19 @@ public class CourseApi extends BaseApi {
 		XSSFSheet sheet = wb.getSheetAt(0);
 		int lastRowIndex = sheet.getLastRowNum();
 		int i = 1;
+		DataFormatter df = new DataFormatter();
 		while(i <= lastRowIndex) {
+			if(df.formatCellValue(sheet.getRow(i).getCell(0)).isEmpty()) {
+				break;
+			}
 			int groupMemberCount = 1;
 			int currentRow = i + 1;
-			while(currentRow <= lastRowIndex && sheet.getRow(currentRow).getCell(0).getStringCellValue().isEmpty()) {
-				System.out.println("currentRow:" + currentRow);
-				System.out.println(sheet.getRow(currentRow).getCell(0).getStringCellValue());
+			while(currentRow <= lastRowIndex && 
+					df.formatCellValue(sheet.getRow(currentRow).getCell(0)).isEmpty() && 
+					!df.formatCellValue(sheet.getRow(currentRow).getCell(1)).isEmpty() &&
+					!df.formatCellValue(sheet.getRow(currentRow).getCell(2)).isEmpty() &&
+					!df.formatCellValue(sheet.getRow(currentRow).getCell(3)).isEmpty()
+					) {
 				currentRow++;
 				groupMemberCount++;
 			}
@@ -286,9 +294,12 @@ public class CourseApi extends BaseApi {
 			System.out.println(i + "");
 			for(currentRow = i; currentRow < i + groupMemberCount; currentRow++) {
 				Row row = sheet.getRow(currentRow);
-				String name = row.getCell(1).getStringCellValue();
-				String studentNumber = row.getCell(2).getStringCellValue();
-				String email = row.getCell(3).getStringCellValue();
+				String name = df.formatCellValue(row.getCell(1));
+				String studentNumber = df.formatCellValue(row.getCell(2));
+				String email = df.formatCellValue(row.getCell(3));
+				if(name.isEmpty() || studentNumber.isEmpty() || email.isEmpty()) {
+					continue;
+				}
 				Query getExistUserQuery = _session.createQuery(
 						"from User where username=:name ");
 				getExistUserQuery.setString("name", email);
