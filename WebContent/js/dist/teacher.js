@@ -61373,7 +61373,7 @@
 
 	"use strict";
 
-	var host = "localhost";
+	var host = "121.40.97.89";
 	var port = "8080";
 
 	module.exports = "http://" + (host + ":" + port);
@@ -63268,7 +63268,7 @@
 
 	"use strict";
 
-	var padHost = "localhost";
+	var padHost = "121.40.97.89";
 	var padPort = "8081";
 	var apikey = "8f2f95ba0babc4a151d970b8acfbc00869cf3dce5b5ca6893343303d86049cd8";
 	var baseUrl = "http://" + (padHost + ":" + padPort + "/api/1.2.10/");
