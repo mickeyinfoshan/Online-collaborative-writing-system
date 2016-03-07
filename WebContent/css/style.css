@@ -25,6 +25,7 @@ body, div {
     color: white;
     z-index: 999;
     padding: 0 10px;
+    opacity :　0;
 }
 
 .footer {
@@ -147,6 +148,8 @@ input {
     float: left;
     padding-top: 10px;
     font-size: 20px;
+    opacity: 0;
+    display: none;
 }
 
 .nav {

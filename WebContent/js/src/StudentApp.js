@@ -13,11 +13,9 @@ import Colors from 'material-ui/lib/styles/colors';
 import List from 'material-ui/lib/lists/list';
 import ListItem from 'material-ui/lib/lists/list-item';
 import IconButton from 'material-ui/lib/icon-button';
-import ContentAdd from 'material-ui/lib/svg-icons/content/add';
-import ContentClear from 'material-ui/lib/svg-icons/content/clear';
 import Dialog from 'material-ui/lib/dialog';
 import FlatButton from 'material-ui/lib/flat-button';
-import SelectField from 'material-ui/lib/select-field';
+import TextField from 'material-ui/lib/text-field';
 
 var PublicBlock = require("./public/PublicBlock");
 
@@ -28,18 +26,37 @@ var StudentApp = React.createClass({
 			user : null,
 			selectedCourses : [],
 			currentCourse : null,
-			notSelectedCourses : [],
+			members : [],
+			missionPad : null,
 			addCourseDialog : false,
-			courseToAdd : null,
 			missions : [],
-			currentMission : null
+			currentMission : null,
 		};
 	},
 
 	componentDidMount: function() {
-	  this.getUser();
+	  //this.getUser();
 	},
-
+	login : function() {
+		var email = this.refs.loginEmailInput.getValue();
+		var password = this.refs.loginPasswordInput.getValue();
+		if(!email || !password) {
+			return;
+		}
+		var dataToPost = {};
+		dataToPost["user.username"] = email;
+		dataToPost["user.password"] = password;
+		var url = "/pad/login";
+		$.post(url, dataToPost, function(res) {
+			res = JSON.parse(res);
+			if(res.message == "ok") {
+				this.getUser();
+			}
+			else {
+				alert("邮箱或学号错误");
+			}
+		}.bind(this));
+	},
 	getUser : function() {
 		$.get("/pad/getInfo", function(res) {
 			res = JSON.parse(res);
@@ -55,7 +72,7 @@ var StudentApp = React.createClass({
 			return;
 		}
 		this.getSelectedCourses();
-		this.getNotSelectedCourses();
+		//this.getNotSelectedCourses();
 	},
 
 	getSelectedCourses : function() {
@@ -73,6 +90,20 @@ var StudentApp = React.createClass({
 			this.setState({
 				selectedCourses : res,
 				currentCourse : _currentCourse
+			});
+		}.bind(this));
+	},
+
+	getMembers : function() {
+		var userId = this.getUserId;
+		if(!this.state.currentCourse) {
+			return;
+		}
+		var courseId = this.state.currentCourse.id;
+		var url = `/pad/api/course/${courseId}/student/${userId}/members`;
+		$.get(url, function(res) {
+			this.setState({
+				members : res 
 			});
 		}.bind(this));
 	},
@@ -121,6 +152,20 @@ var StudentApp = React.createClass({
 		}.bind(this))
 	},
 
+	getMissionPad : function() {
+		var userId = this.getUserId();
+		if(!this.state.currentMission) {
+			return;
+		}
+		var missionId = this.state.currentMission.id;
+		var url = `/pad/api/mission/${missionId}/pad/for/${userId}`;
+		$.get(url, function(res) {
+			this.setState({
+				missionPad : res 
+			});
+		}.bind(this));
+	},
+
 	selectCourse : function(course) {
 		if(this.state.currentCourse) {
 			if(this.state.currentCourse.id == course.id) {
@@ -129,7 +174,10 @@ var StudentApp = React.createClass({
 		}
 		this.setState({
 			currentCourse : course 
-		}, this.getMissions.bind(this));
+		}, function(){
+			this.getMissions();
+			this.getMembers();
+		}.bind(this));
 	},
 
 	selectMission : function(mission) {
@@ -140,7 +188,9 @@ var StudentApp = React.createClass({
 		}
 		this.setState({
 			currentMission : mission 
-		});
+		}, function() {
+			this.getMissionPad();
+		}.bind(this));
 	},
 
 	hideAddCourseDialog : function() {
@@ -198,6 +248,23 @@ var StudentApp = React.createClass({
 		});
 	},
 
+	toEdit : function() {
+		window.users = this.state.members;
+		var group = {
+			status : 0,
+			id : this.state.missionPad.group_id,
+			name : this.state.currentCourse.name + "小组"
+		};
+		var padName = this.state.missionPad.pad_id.split("$")[1];
+		window.edit = {
+			user : this.state.user,
+			group : group,
+			name : padName,
+			groupID : this.state.missionPad.group_id
+		};
+		window.open("/pad/edit.html", "edit_window");
+	},
+
 	render: function() {
 		var title = "课程作业";
 		var rightElement = <span></span>;
@@ -219,7 +286,11 @@ var StudentApp = React.createClass({
 	        		anchorOrigin={{horizontal: 'right', vertical: 'top'}}
 	      		>
 	        		<MenuItem primaryText="帮助" />
-	        		<MenuItem primaryText="退出" onClick={window.close.bind(window)} />
+	        		<MenuItem primaryText="退出" onClick={()=>{
+	        			this.setState({
+	        				user : null 
+	        			});
+	        		}} />
 	      		</IconMenu>
 			);
 		}
@@ -227,8 +298,7 @@ var StudentApp = React.createClass({
 		var selectedCourseItems = this.state.selectedCourses.map((course)=>{
 			var key = "selectedCourse" + course.id;
 			return <ListItem key={key} onClick={_this.selectCourse.bind(_this, course)}
-					rightIcon={<ContentClear onClick={_this.removeCourse.bind(_this, course)} />}
-			>
+					>
 						{course.name} - {course.teacher_name}
 					</ListItem>
 		});
@@ -272,14 +342,10 @@ var StudentApp = React.createClass({
 
 		const actions = [
 		      <FlatButton
-		        label="取消"
-		        secondary={true}
-		        onTouchTap={this.hideAddCourseDialog} />,
-		      <FlatButton
-		        label="确定"
+		        label="登录"
 		        primary={true}
 		        keyboardFocused={true}
-		        onTouchTap={this.addCourse} />,
+		        onTouchTap={this.login} />,
 		];
 
 		var courseToAddValue = -1;
@@ -287,11 +353,7 @@ var StudentApp = React.createClass({
 			courseToAddValue = this.state.courseToAdd.id;
 		}
 
-		var notSelectedCourseItems = this.state.notSelectedCourses.map((course)=>{
-			var key = "notSelectedCourse" + course.id;
-			var text = course.name + " - " + course.teacher_name;
-			return <MenuItem key={key} value={course.id} primaryText={text} />
-		});
+		var notSelectedCourseItems = "";
 
 		var missionDetailBlock = "";
 
@@ -308,8 +370,13 @@ var StudentApp = React.createClass({
 			var end = getDateStr(currentMission.end);
 			var dateNotifyStr = "";
 			var now = new Date();
+			var toEditButton = <FlatButton
+		        label="编写作业"
+		        secondary={true}
+		        onTouchTap={this.toEdit} />;
 			if(now > currentMission.end) {
 				dateNotifyStr = "（已截止）";
+				toEditButton = <span>该作业已截止</span>;
 			}
 
 			if(now < currentMission.start) {
@@ -327,8 +394,9 @@ var StudentApp = React.createClass({
 						{currentMission.content}
 						<div style={{textAlign : "right", fontSize : 15, color : "#aaa", marginTop : 50}}>{currentMissionCreateTime}</div>
 					</div>
+					{toEditButton}
 					<div style={{borderTop : "solid 1px #ccc"}}>
-						<p>该作业公开的文章</p>
+						<p>公开的文章</p>
 						<div>
 							<PublicBlock url={publicPadUrl} />
 						</div>
@@ -352,19 +420,10 @@ var StudentApp = React.createClass({
 						<div style={{display : "flex", 
 									justifyContent: "space-between", 
 									alignItems : "center",
-									paddingLeft : 15,
-									paddingRight : 15,
+									padding : 15,
 									borderBottom : "solid 1px #ccc"
 						}}>
 							<span style={{fontSize : 18}}>我的课程</span>
-							<IconButton 
-								tooltip="添加课程" 
-								touch={true} 
-								tooltipPosition="bottom-center"
-								onClick={_this.showAddCourseDialog}
-							>
-		      					<ContentAdd />
-	    					</IconButton>
 						</div>
 						<List>
 							{selectedCourseItems}
@@ -374,17 +433,22 @@ var StudentApp = React.createClass({
 					{missionDetailBlock}
 				</div>
 				<Dialog
-		          title="添加课程"
+		          title="登录"
 		          actions={actions}
-		          modal={false}
-		          open={this.state.addCourseDialog}
-		          onRequestClose={this.hideAddCourseDialog}>
-		           <span>课程：</span>
-		           <SelectField value={courseToAddValue} onChange={this.selectCourseToAdd}>
-		           	<MenuItem value={-1} primaryText="请选择"/>
-		           	{notSelectedCourseItems}
-		           </SelectField>
-		        
+		          modal={true}
+		          open={!this.state.user}
+		          onRequestClose={()=>{}}>
+		        	<TextField
+      					ref="loginEmailInput"
+      					floatingLabelText="请填写您的邮箱"
+    				/>
+    				&nbsp;&nbsp;
+    				&nbsp;
+    				<TextField 
+    					ref="loginPasswordInput"
+    					floatingLabelText="请填写您的学号"
+    					type="password"
+    				/>
 		        </Dialog>
 			</div>
 		);

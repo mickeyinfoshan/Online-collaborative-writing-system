@@ -12,6 +12,7 @@
 		<property name="registtime" />
 		<property name="authority" />
 		<property name="name" />
+		<property name="studentNumber" />
 		<set name="groups" table="t_user_group" lazy="false" inverse="true">
 			<key column="authorId"></key>
 			<many-to-many class="com.pad.entity.Group" column="groupId">

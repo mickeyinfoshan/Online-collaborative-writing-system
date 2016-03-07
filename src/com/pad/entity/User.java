@@ -12,7 +12,9 @@ import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.PropertyFilter;
 
+import com.github.kevinsawicki.http.HttpRequest;
 import com.pad.util.DateUtil;
+import com.pad.util.PadServerApi;
 
 public class User implements Serializable, Comparable<User> {
 	/**
@@ -25,6 +27,7 @@ public class User implements Serializable, Comparable<User> {
 	private String username;
 	private String password;
 	private String registtime;// yyyy-MM-dd-HH-mm-ss
+	private String studentNumber;
 	private int authority = 10;
 	private Set<Group> groups = new HashSet<Group>();
 
@@ -125,5 +128,20 @@ public class User implements Serializable, Comparable<User> {
 			}
 		}
 		return 0;
+	}
+	
+	public void initPadUser(){
+		String url = PadServerApi.getBaseRequestUrl("createAuthorIfNotExistsFor");
+		url += "&authorMapper=" + this.getAuthorId();
+		url += "&name=" + this.getName();
+		HttpRequest.get(url);
+	}
+
+	public String getStudentNumber() {
+		return studentNumber;
+	}
+
+	public void setStudentNumber(String studentNumber) {
+		this.studentNumber = studentNumber;
 	}
 }

@@ -3,6 +3,7 @@ package com.pad.entity;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.hibernate.Session;
@@ -28,6 +29,8 @@ public class CoursePadGroup {
 	public void setId(int id) {
 		this.id = id;
 	}
+	
+	@ManyToOne
 	public Course getCourse() {
 		return course;
 	}

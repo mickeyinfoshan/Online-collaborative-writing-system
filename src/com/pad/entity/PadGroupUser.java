@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PadGroupUser {
 	private int id;
 	private String padGroupId;
-	private User user;
+	private String user;
 	@Id
 	@GeneratedValue
 	public int getId() {
@@ -25,10 +25,10 @@ public class PadGroupUser {
 	public void setPadGroupId(String padGroupId) {
 		this.padGroupId = padGroupId;
 	}
-	public User getUser() {
+	public String getUser() {
 		return user;
 	}
-	public void setUser(User user) {
+	public void setUser(String user) {
 		this.user = user;
 	}
 }

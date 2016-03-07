@@ -60,11 +60,11 @@
     </init-param>
     <init-param>
       <param-name>includeStrings</param-name>
-      <param-value>.do;.html</param-value>
+      <param-value>.do;</param-value>
     </init-param>
     <init-param>
       <param-name>redirectPath</param-name>
-      <param-value>/index.html</param-value>
+      <param-value>/courses.html</param-value>
     </init-param>
     <init-param>
       <param-name>disabletestfilter</param-name>
@@ -83,6 +83,10 @@
   		<param-name>jersey.config.server.provider.packages</param-name>
   		<param-value>com.pad.api</param-value>
 	</init-param>
+	<init-param>
+        <param-name>jersey.config.server.provider.classnames</param-name>
+        <param-value>org.glassfish.jersey.media.multipart.MultiPartFeature</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
