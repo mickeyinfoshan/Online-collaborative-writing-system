@@ -2,13 +2,21 @@ var React = require('react');
 var $ = require("jquery");
 var {Base} = require("../data-station/index");
 var selectedPad = require("../models/selectedPad");
+var selectedMission = require("../models/selectedMission")
 var padServer = require("../utils/padServer");
+var server = require("../utils/server")
+
+import TextField from 'material-ui/lib/text-field';
+import RaisedButton from 'material-ui/lib/raised-button';
+
+import injectTapEventPlugin from 'react-tap-event-plugin';
 
 var PadContent = React.createClass({
 	
 	getInitialState: function() {
 		return {
-			content : "" 
+			content : "",
+			score : -1, 
 		};
 	},
 
@@ -18,6 +26,11 @@ var PadContent = React.createClass({
 		var _this = this;
 		this.ds.addHandler(function() {
 			_this.getContent();
+			if(selectedPad.pad) {
+				_this.setState({
+					score : selectedPad.pad.score
+				});
+			}
 		}, "SelectedPad.change");
 	},
 
@@ -37,6 +50,37 @@ var PadContent = React.createClass({
 			}
 		});
 	},
+	setPadScore : function() {
+		if(!selectedMission.mission) {
+			return;
+		}
+		if(!selectedPad.pad) {
+			return;
+		}
+		var padId = selectedPad.pad.pad_id;
+		var missionId = selectedMission.mission.id;
+		var score = this.state.score;
+		var missionPadId = selectedPad.pad.id;
+		if(!$.isNumeric(score)) {
+			alert("请输入数字分数");
+			return;
+		}
+		var url = server + `/pad/api/mission/pad/${missionPadId}/score/${score}`;
+		$.get(url, function(res) {
+			if(res == "200") {
+				alert("打分成功");
+			}
+			else {
+				alert("打分失败")
+			}
+		});
+	},
+
+	scoreInputChangeHandler : function() {
+		this.setState({
+			score : this.refs.scoreInput.getValue()
+		});
+	},
 
 	render: function() {
 		var content = this.state.content || "暂无内容";
@@ -44,14 +88,28 @@ var PadContent = React.createClass({
 		if(selectedPad.pad) {
 			name = selectedPad.pad.pad_id.split("$")[1];
 		}
+		var scoreInputValue = "";
+		if(Number(this.state.score) > 0) {
+			scoreInputValue = this.state.score;
+		}
 		return (
 			<div style={{borderBottom : "solid 1px #ccc"}}>
 				<h2 style={{borderBottom : "solid 1px #ccc", padding: 15}}>{name}</h2>
 				<div dangerouslySetInnerHTML={{__html: content}} style={{padding : 15}} />
+				<div style={{textAlign : "right"}}>
+				<TextField ref="scoreInput" 
+						   type="number" 
+						   hintText="请输入分数"
+						   onChange={this.scoreInputChangeHandler} 
+						   value={scoreInputValue} />
+				<RaisedButton label="打分" secondary={true} onClick={this.setPadScore} />
+				</div>
 			</div>
 		);
 	}
 
 });
+
+injectTapEventPlugin();
 
 module.exports = PadContent;

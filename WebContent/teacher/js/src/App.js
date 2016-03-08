@@ -77,7 +77,7 @@ var App = React.createClass({
 						<SelectedCourseBlock />
 						<SelectedMissionBlock />
 					</div>
-					<div style={{width : "80%", display: "inline-block", verticalAlign:"top"}}>
+					<div style={{width : "80%", display: "inline-block", verticalAlign:"top", overflowY:"auto"}}>
 						<PadList />
 					</div>
 				</div>

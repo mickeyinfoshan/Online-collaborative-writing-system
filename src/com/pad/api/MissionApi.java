@@ -138,6 +138,19 @@ public class MissionApi extends BaseApi{
 		return "";
 	}
 	
+	@GET
+	@Path("/pad/{missionpad_id}/score/{score}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String setMissionPadScore(@PathParam("missionpad_id") int missionpad_id, @PathParam("score") int score) {
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		MissionPad mp = (MissionPad)session.get(MissionPad.class, missionpad_id);
+		mp.setScore(score);
+		session.save(mp);
+		t.commit();
+		return "200";
+	}
+	
 	public SessionFactory getMysf() {
 		return mysf;
 	}

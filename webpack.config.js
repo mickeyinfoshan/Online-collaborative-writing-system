@@ -3,6 +3,7 @@ var webpack = require("webpack");
 module.exports = {
     entry : {edit : "./WebContent/js/src/edit.js",
               teacher : "./WebContent/teacher/js/src/index.js",
+              analyze : "./WebContent/teacher/js/src/analyze/index.js",
               student : "./WebContent/js/src/student.js",
               pad : "./WebContent/js/src/pad.js"
             },

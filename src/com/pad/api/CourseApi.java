@@ -165,7 +165,7 @@ public class CourseApi extends BaseApi {
 		List<String> groupIds = (List<String>)session.createQuery(coursePadGroupQuery).list();
 		for(int i = 0; i < groupIds.size(); i++) {
 			String groupId = groupIds.get(i);
-			String padName = "mission" + mission.getName() + "-小组" +i;
+			String padName = mission.getName() + "-小组" + (i + 1);
 			String url = PadServerApi.getBaseRequestUrl("createGroupPad");
 			url += "&groupID=" + groupId;
 			url += "&padName=" + URLEncoder.encode(padName, "UTF-8");
@@ -264,6 +264,11 @@ public class CourseApi extends BaseApi {
 	@Path("/{course_id}/student/import")
 	@Consumes({MediaType.MULTIPART_FORM_DATA})
 	public String importStudents(@PathParam("course_id") int course_id, @FormDataParam("file") InputStream fileInputStream) throws IOException {
+		int START_ROW = 2;
+		int STUDENT_NUMBER_COL = 0;
+		int NAME_COL = 1;
+		int GROUP_COL = 2;
+		int EMAIL_COL = 3;
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
 		Session _session = mysf.openSession();
@@ -271,19 +276,20 @@ public class CourseApi extends BaseApi {
 		XSSFWorkbook wb = new XSSFWorkbook(fileInputStream);
 		XSSFSheet sheet = wb.getSheetAt(0);
 		int lastRowIndex = sheet.getLastRowNum();
-		int i = 1;
+		int i = START_ROW;
 		DataFormatter df = new DataFormatter();
 		while(i <= lastRowIndex) {
-			if(df.formatCellValue(sheet.getRow(i).getCell(0)).isEmpty()) {
+			String groupNumber = df.formatCellValue(sheet.getRow(i).getCell(GROUP_COL));
+			if(groupNumber.isEmpty()) {
 				break;
 			}
 			int groupMemberCount = 1;
 			int currentRow = i + 1;
 			while(currentRow <= lastRowIndex && 
-					df.formatCellValue(sheet.getRow(currentRow).getCell(0)).isEmpty() && 
-					!df.formatCellValue(sheet.getRow(currentRow).getCell(1)).isEmpty() &&
-					!df.formatCellValue(sheet.getRow(currentRow).getCell(2)).isEmpty() &&
-					!df.formatCellValue(sheet.getRow(currentRow).getCell(3)).isEmpty()
+					df.formatCellValue(sheet.getRow(currentRow).getCell(GROUP_COL)).equals(groupNumber) && 
+					!df.formatCellValue(sheet.getRow(currentRow).getCell(STUDENT_NUMBER_COL)).isEmpty() &&
+					!df.formatCellValue(sheet.getRow(currentRow).getCell(NAME_COL)).isEmpty() &&
+					!df.formatCellValue(sheet.getRow(currentRow).getCell(EMAIL_COL)).isEmpty()
 					) {
 				currentRow++;
 				groupMemberCount++;
@@ -294,9 +300,9 @@ public class CourseApi extends BaseApi {
 			System.out.println(i + "");
 			for(currentRow = i; currentRow < i + groupMemberCount; currentRow++) {
 				Row row = sheet.getRow(currentRow);
-				String name = df.formatCellValue(row.getCell(1));
-				String studentNumber = df.formatCellValue(row.getCell(2));
-				String email = df.formatCellValue(row.getCell(3));
+				String name = df.formatCellValue(row.getCell(NAME_COL));
+				String studentNumber = df.formatCellValue(row.getCell(STUDENT_NUMBER_COL));
+				String email = df.formatCellValue(row.getCell(EMAIL_COL));
 				if(name.isEmpty() || studentNumber.isEmpty() || email.isEmpty()) {
 					continue;
 				}
