@@ -64890,6 +64890,7 @@
 						{ style: { display: "inline-block", verticalAlign: "top", marginLeft: 25 } },
 						React.createElement(_textField2.default, { floatingLabelText: '请输入作业内容',
 							ref: 'contentInput',
+							rowsMax: 5,
 							hintText: '', onChange: this.setContent, value: this.state.content,
 							disabled: dialogController.mission == "update" && this.state.start > now,
 							multiLine: true })
@@ -65128,7 +65129,15 @@
 				score: this.refs.scoreInput.getValue()
 			});
 		},
-
+		toAnalyze: function toAnalyze() {
+			var padID = selectedPad.pad.pad_id;
+			window.open("./analyze.html?padID=" + padID);
+		},
+		exportPDF: function exportPDF() {
+			var padId = selectedPad.pad.pad_id;
+			var missionId = selectedMission.mission.id;
+			window.open("/pad/api/mission/" + missionId + "/pad/" + padId + "/export/pdf");
+		},
 		render: function render() {
 			var content = this.state.content || "暂无内容";
 			var name = "";
@@ -65151,11 +65160,15 @@
 				React.createElement(
 					"div",
 					{ style: { textAlign: "right" } },
+					React.createElement(_raisedButton2.default, { label: "导出pdf", onClick: this.exportPDF }),
+					React.createElement(_raisedButton2.default, { label: "数据分析", primary: true, onClick: this.toAnalyze }),
 					React.createElement(_textField2.default, { ref: "scoreInput",
 						type: "number",
 						hintText: "请输入分数",
 						onChange: this.scoreInputChangeHandler,
-						value: scoreInputValue }),
+						value: scoreInputValue,
+						style: { width: 60, marginLeft: 80 }
+					}),
 					React.createElement(_raisedButton2.default, { label: "打分", secondary: true, onClick: this.setPadScore })
 				)
 			);

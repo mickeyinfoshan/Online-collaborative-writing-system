@@ -1,7 +1,16 @@
 package com.pad.api;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
@@ -10,7 +19,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,6 +35,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.kevinsawicki.http.HttpRequest;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.tool.xml.XMLWorkerHelper;
 import com.pad.entity.Course;
 import com.pad.entity.Mission;
 import com.pad.entity.MissionPad;
@@ -149,6 +166,39 @@ public class MissionApi extends BaseApi{
 		session.save(mp);
 		t.commit();
 		return "200";
+	}
+	
+	@GET
+	@Produces({"application/pdf"})
+	@Path("/{mission_id}/pad/{pad_id}/export/pdf")
+	public Response getPDF(@PathParam("pad_id") final String pad_id) throws Exception {
+		String url = PadServerApi.getBaseRequestUrl("getHTML");
+		url += "&padID=" + URLEncoder.encode(pad_id, "UTF-8");
+		System.out.println(url);
+		String resString = HttpRequest.get(url).body();
+		JSONObject res = JSON.parseObject(resString);
+		System.out.println(resString);
+		String padHtml = res.getJSONObject("data").getString("html");
+		padHtml = padHtml.replaceAll("<br>", "<br />");
+		padHtml = padHtml.replaceAll("<body>", "<body style=\"font-family:SimSun;\">");
+		String TEMP_FILE = "temp.pdf";
+		Document document = new Document();
+		PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(TEMP_FILE));
+		document.open();
+		InputStream stream = new ByteArrayInputStream(padHtml.getBytes(StandardCharsets.UTF_8));
+		XMLWorkerHelper.getInstance().parseXHtml(writer, document, stream, Charset.forName("UTF-8"));
+		document.close();
+		File pdfFile = new File(TEMP_FILE);
+		ResponseBuilder response = Response.ok((Object) pdfFile);
+		String pdfFileName = pad_id;
+		int dollarIndex = pdfFileName.indexOf("$");
+		pdfFileName = pdfFileName.substring(dollarIndex + 1);
+		pdfFileName = URLEncoder.encode(pdfFileName, "UTF-8");
+		pdfFileName += ".pdf";
+		System.out.println(pdfFileName);
+		response.header("Content-Disposition",
+				"attachment; filename=" + pdfFileName);
+		return response.build();
 	}
 	
 	public SessionFactory getMysf() {

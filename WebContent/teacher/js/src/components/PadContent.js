@@ -81,7 +81,15 @@ var PadContent = React.createClass({
 			score : this.refs.scoreInput.getValue()
 		});
 	},
-
+	toAnalyze : function() {
+		var padID = selectedPad.pad.pad_id;
+		window.open("./analyze.html?padID=" + padID);
+	},
+	exportPDF : function() {
+		var padId = selectedPad.pad.pad_id;
+		var missionId = selectedMission.mission.id;
+		window.open(`/pad/api/mission/pad/${padId}/export/pdf`);
+	},
 	render: function() {
 		var content = this.state.content || "暂无内容";
 		var name = "";
@@ -97,11 +105,15 @@ var PadContent = React.createClass({
 				<h2 style={{borderBottom : "solid 1px #ccc", padding: 15}}>{name}</h2>
 				<div dangerouslySetInnerHTML={{__html: content}} style={{padding : 15}} />
 				<div style={{textAlign : "right"}}>
+				<RaisedButton label="导出pdf" onClick={this.exportPDF} />
+				<RaisedButton label="数据分析" primary={true} onClick={this.toAnalyze} />
 				<TextField ref="scoreInput" 
 						   type="number" 
 						   hintText="请输入分数"
 						   onChange={this.scoreInputChangeHandler} 
-						   value={scoreInputValue} />
+						   value={scoreInputValue}
+						   style={{width : 120, marginLeft: 80}}
+				/>
 				<RaisedButton label="打分" secondary={true} onClick={this.setPadScore} />
 				</div>
 			</div>

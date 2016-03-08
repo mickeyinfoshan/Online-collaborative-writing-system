@@ -62207,7 +62207,8 @@
 					React.createElement(
 						"div",
 						{ style: { paddingTop: 20, lineHeight: 1.5 } },
-						currentMission.content,
+						currentMission.content.substring(0, 20),
+						"...",
 						React.createElement(
 							"div",
 							{ style: { textAlign: "right", fontSize: 15, color: "#aaa", marginTop: 50 } },

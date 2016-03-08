@@ -227,7 +227,7 @@ define(function (require, explore, module) {
                 }, function (json) {
                     console.log(json);
                     if (json.code == 3) {
-                        $("#" + id).empty();
+                        //$("#" + id).empty();
                         return;
                     }
                     var t = json.data, temp, series = [], ticksT = ["时间(分)"], ticksW = ["字数(个)"];

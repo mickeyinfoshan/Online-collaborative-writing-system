@@ -153,6 +153,7 @@ var MissionDialog = React.createClass({
       		  <div style={{display:"inline-block", verticalAlign : "top", marginLeft : 25}} >
       		  	<TextField floatingLabelText="请输入作业内容" 
       		  			ref="contentInput"
+      		  			rowsMax={5}
 	          			hintText="" onChange={this.setContent} value={this.state.content} 
 	          			disabled={dialogController.mission == "update" && this.state.start > now}
 	          			multiLine={true} />
