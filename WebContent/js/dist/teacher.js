@@ -65136,7 +65136,7 @@
 		exportPDF: function exportPDF() {
 			var padId = selectedPad.pad.pad_id;
 			var missionId = selectedMission.mission.id;
-			window.open("/pad/api/mission/" + missionId + "/pad/" + padId + "/export/pdf");
+			window.open("/pad/api/mission/pad/" + padId + "/export/pdf");
 		},
 		render: function render() {
 			var content = this.state.content || "暂无内容";
@@ -65167,7 +65167,7 @@
 						hintText: "请输入分数",
 						onChange: this.scoreInputChangeHandler,
 						value: scoreInputValue,
-						style: { width: 60, marginLeft: 80 }
+						style: { width: 120, marginLeft: 80 }
 					}),
 					React.createElement(_raisedButton2.default, { label: "打分", secondary: true, onClick: this.setPadScore })
 				)
@@ -65619,7 +65619,8 @@
 				React.createElement(
 					"p",
 					{ style: { wordBreak: "break-all", lineHeight: 1.5 } },
-					selectedMission.mission.content
+					selectedMission.mission.content.substring(0, 20),
+					"..."
 				),
 				React.createElement(
 					"p",
