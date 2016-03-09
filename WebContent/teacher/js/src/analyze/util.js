@@ -67,7 +67,7 @@ export function getPadStatic(historySlice, scope) {
 export function getChatStatic(historySlice) {
 	var chatCount = 0;
 	historySlice.forEach(function(item) {
-
+		chatCount += item.text.lenght
 	})
 	return {chatCount};
 }

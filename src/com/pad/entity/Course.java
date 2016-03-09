@@ -13,6 +13,7 @@ public class Course {
 	private String created_time;
 	private String teacher_id;
 	private String teacher_name;
+	private String year;
 	
 	@Id
 	@GeneratedValue
@@ -45,6 +46,12 @@ public class Course {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
 	}
 	
 	

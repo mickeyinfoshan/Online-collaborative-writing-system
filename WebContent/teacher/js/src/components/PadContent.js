@@ -88,7 +88,7 @@ var PadContent = React.createClass({
 	exportPDF : function() {
 		var padId = selectedPad.pad.pad_id;
 		var missionId = selectedMission.mission.id;
-		window.open(`/pad/api/mission/pad/${padId}/export/pdf`);
+		window.open(`/pad/api/mission/${missionId}/pad/${padId}/export/pdf`);
 	},
 	render: function() {
 		var content = this.state.content || "暂无内容";
