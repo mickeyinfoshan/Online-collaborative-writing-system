@@ -13,6 +13,7 @@ public class MissionPad {
 	private int id;
 	private Mission mission;
 	private String pad_id;
+	private int score = -1;
 	
 	@Id
 	@GeneratedValue
@@ -35,5 +36,11 @@ public class MissionPad {
 	}
 	public void setPad_id(String pad_id) {
 		this.pad_id = pad_id;
+	}
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
 	}
 }

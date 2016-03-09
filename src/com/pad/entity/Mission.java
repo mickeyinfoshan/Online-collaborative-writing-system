@@ -1,5 +1,6 @@
 package com.pad.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -58,6 +59,8 @@ public class Mission {
 	public void setEnd(String end) {
 		this.end = end;
 	}
+	
+	@Column(columnDefinition="LONGTEXT")
 	public String getContent() {
 		return content;
 	}

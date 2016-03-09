@@ -22,7 +22,7 @@ var PadList = React.createClass({
 		var padItems = pads._pads.map((pad)=><PadItem pad_id={pad.pad_id} key={pad.pad_id}/>);
 		var title = pads._pads.length + " 份作业";
 		return (
-			<List subheader={title}>
+			<List subheader={title} style={{overflowY:"auto"}}>
 				{padItems}
 			</List>
 		);

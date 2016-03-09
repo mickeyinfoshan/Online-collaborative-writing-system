@@ -23,7 +23,7 @@ class Pads extends Model {
 			_this.set({
 				_pads : res
 			});
-			setTimeout(_this.init.bind(_this), 30000);
+			//setTimeout(_this.init.bind(_this), 30000);
 		});
 	}
 };
