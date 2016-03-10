@@ -28,8 +28,8 @@ seajs.config({
 
     }
 });
-window.padDomainIP = "121.40.97.89";
-window.padDomainPort = "8081"
+window.padDomainIP = "222.198.126.242";
+window.padDomainPort = "8080"
 window.padDomainBasicURL = "http://" + window.padDomainIP + ":" + padDomainPort;
 seajs.padDomainApi = window.padDomainBasicURL + "/api/1.2.10/";
 seajs.apikey = "8f2f95ba0babc4a151d970b8acfbc00869cf3dce5b5ca6893343303d86049cd8";

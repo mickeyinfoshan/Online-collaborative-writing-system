@@ -66,7 +66,7 @@ public class MailThread extends Thread {
 		String endString = df.format(end);
 		text = text + "时间：" + startString + "  -  " + endString + "\n";
 		text = text + "作业内容：" + mission.getContent() + "\n";
-		text = text + "<a href='http://121.40.97.89:8080/pad'>跳转链接</a>";
+		text = text + "<a href='http://222.198.126.242/pad'>跳转链接</a>";
 		return text;
 	}
 	public String getSubjectText() {
