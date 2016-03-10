@@ -51989,7 +51989,8 @@
 		var day = d.getDate();
 		var hour = d.getHours();
 		var minute = d.getMinutes();
-		return year + "/" + month + "/" + day + " " + hour + ":" + minute;
+		var second = d.getSeconds();
+		return year + "/" + month + "/" + day + " " + hour + ":" + minute + ":" + second;
 	}
 
 	var Modes = {
@@ -52146,17 +52147,19 @@
 			var chatHistory = this.state.chatHistory.slice(0);
 			var start = this.state.start.getTime();
 			var scope = this.state.scope;
-			var padHistorySlices = (0, _util.splitHistory)(start, scope, padHistory, "timestamp");
-			var chatHistorySlices = (0, _util.splitHistory)(start, scope, chatHistory, "time");
 			// var padHistorySlices = {};
 			// var chatHistorySlices = {};
-			console.log(padHistorySlices);
+			// console.log("padHistorySlices:");
+			// console.log(padHistorySlices);
 			var _start = start;
 			var now = new Date();
 			while (_start < now.getTime()) {
-				var padHistorySlice = padHistorySlices[_start] || [];
-				var chatHistorySlice = chatHistorySlices[_start] || [];
-				var timeDisplay = getDisplayTime(_start);
+				var padSliceResult = (0, _util.getHistorySlice)(_start, scope, padHistory, "timestamp");
+				var padHistorySlice = padSliceResult._slice;
+				console.log(padHistorySlice);
+				var chatSliceResult = (0, _util.getHistorySlice)(_start, scope, chatHistory, "time");
+				var chatHistorySlice = chatSliceResult._slice;
+				var timeDisplay = getDisplayTime(_start) + "-" + getDisplayTime(_start + scope);
 				var padStatic = (0, _util.getPadStatic)(padHistorySlice, scope);
 				var chatStatic = (0, _util.getChatStatic)(chatHistorySlice);
 				var dataItem = {
@@ -52165,7 +52168,10 @@
 					padTimePercentage: padStatic.timePercentage,
 					padTextCount: padStatic.textCount,
 					authorsLength: padStatic.authorsLength,
-					chatCount: chatStatic.chatCount
+					maxTimestampGap: padStatic.maxTimestampGap,
+					chatCount: chatStatic.chatCount,
+					chatterCount: chatStatic.chatterCount,
+					messageCount: chatStatic.messageCount
 				};
 				data.push(dataItem);
 				_start += scope;
@@ -52198,8 +52204,6 @@
 				var startMoment = _start - _window / 2; //取样的开始时间为该时刻前半个窗口
 				var padSliceResult = (0, _util.getHistorySlice)(startMoment, _window, padHistory, "timestamp");
 				var padHistorySlice = padSliceResult._slice;
-				console.log(padSliceResult);
-				console.log(padHistorySlice);
 				var chatSliceResult = (0, _util.getHistorySlice)(startMoment, _window, chatHistory, "time");
 				var chatHistorySlice = chatSliceResult._slice;
 				var padStatic = (0, _util.getPadStatic)(padHistorySlice, _window);
@@ -52211,7 +52215,10 @@
 					padTimePercentage: padStatic.timePercentage,
 					padTextCount: padStatic.textCount,
 					authorsLength: padStatic.authorsLength,
-					chatCount: chatStatic.chatCount
+					maxTimestampGap: padStatic.maxTimestampGap,
+					chatCount: chatStatic.chatCount,
+					chatterCount: chatStatic.chatterCount,
+					messageCount: chatStatic.messageCount
 				};
 				data.push(dataItem);
 				_start += scope;
@@ -52243,6 +52250,21 @@
 						"td",
 						null,
 						item.chatCount
+					),
+					_react2.default.createElement(
+						"td",
+						null,
+						item.chatterCount
+					),
+					_react2.default.createElement(
+						"td",
+						null,
+						item.messageCount
+					),
+					_react2.default.createElement(
+						"td",
+						null,
+						Math.round(item.maxTimestampGap / 1000)
 					)
 				);
 			});
@@ -52325,7 +52347,7 @@
 					"导出CSV"
 				);
 			}
-			console.log(dataRows);
+			// console.log(dataRows);
 			return _react2.default.createElement(
 				"div",
 				{ style: { textAlign: "center" } },
@@ -52426,6 +52448,21 @@
 									"th",
 									null,
 									"聊天字数"
+								),
+								_react2.default.createElement(
+									"th",
+									null,
+									"聊天人数"
+								),
+								_react2.default.createElement(
+									"th",
+									null,
+									"聊天消息数"
+								),
+								_react2.default.createElement(
+									"th",
+									null,
+									"最大时间戳间隔"
 								)
 							)
 						),
@@ -52518,19 +52555,38 @@
 				authors.push(author);
 			}
 		});
+		var maxTimestampGap = 0;
+		for (var i = 0; i < historySlice.length; i++) {
+			var currItem = historySlice[i];
+			var nextItem = historySlice[i + 1];
+			if (!nextItem) {
+				break;
+			}
+			var timestampGap = nextItem.timestamp - currItem.timestamp;
+			if (timestampGap > maxTimestampGap) {
+				maxTimestampGap = timestampGap;
+			}
+		}
 		return {
 			authorsLength: authors.length,
 			textCount: textCount,
-			timePercentage: timePercentage.toFixed(2)
+			timePercentage: timePercentage.toFixed(2),
+			maxTimestampGap: maxTimestampGap
 		};
 	}
 
 	function getChatStatic(historySlice) {
 		var chatCount = 0;
+		var chatters = [];
 		historySlice.forEach(function (item) {
 			chatCount += item.text.length;
+			if (chatters.indexOf(item.userId) < 0) {
+				chatters.push(item.userId);
+			}
 		});
-		return { chatCount: chatCount };
+		var chatterCount = chatters.length;
+		var messageCount = historySlice.length;
+		return { chatCount: chatCount, chatterCount: chatterCount, messageCount: messageCount };
 	}
 
 /***/ }

@@ -216,7 +216,7 @@ define(function (require, explore, module) {
 //                    w += explore.getTextCountByAuthorId(versions, n.id);
                 }
             });
-            w = versions[versions.length - 1]["sumCount"] || 0;
+            w = versions[versions.length - 1]["sumCount"] - versions[0]["textCount"] || 0;
             api.updatePadAndGroupValue(
                 {
                     "timeValue": Math.round(t),
