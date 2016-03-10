@@ -40,16 +40,13 @@
         <span class="username"></span>
     </div> -->
     <span class="head-title">
-        在线编写
+        在线编写&nbsp;<span id="pad-name-title"></span>
     </span>
 </div>
 
 <div class="content">
     <div class="left info">
-        <div id="buttonList">
-            <div id="missionBlock"></div>
-            <div id="publicButton"></div>
-        </div>
+        
         <br /><br />
         <div id="chartRight">
             <div id="zzd_title">
@@ -57,6 +54,10 @@
             </div>
         </div>
         <div id="commentBlock"></div>
+        <div id="buttonList">
+            <div id="missionBlock"></div>
+            <div id="publicButton"></div>
+        </div>
     </div>
     <div class="right info">
         <div id="pad_orders"></div>
@@ -146,6 +147,7 @@
             $("body").on("load", function () {
                 $(".username").text("当前用户:" + $.user.name);
                 var padName = window.opener.edit.name;
+                $("#pad-name-title").text(padName);
                 if ($.user.authority == 1) {
                     $(".headName").text("正在查看“" + padName + '”文章');
                 } else {

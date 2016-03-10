@@ -28,7 +28,8 @@ function getDisplayTime(timestamp) {
 	var day = d.getDate();
 	var hour = d.getHours();
 	var minute = d.getMinutes();
-	return `${year}/${month}/${day} ${hour}:${minute}`;
+	var second = d.getSeconds();
+	return `${year}/${month}/${day} ${hour}:${minute}:${second}`;
 }
 
 const Modes = {
@@ -183,17 +184,19 @@ const Analyze = React.createClass({
 		var chatHistory = this.state.chatHistory.slice(0);
 		var start = this.state.start.getTime();
 		var scope = this.state.scope;
-		var padHistorySlices = splitHistory(start, scope, padHistory, "timestamp" );
-		var chatHistorySlices = splitHistory(start, scope, chatHistory, "time");
 		// var padHistorySlices = {};
 		// var chatHistorySlices = {};
-		console.log(padHistorySlices);
+		// console.log("padHistorySlices:");
+		// console.log(padHistorySlices);
 		var _start = start;
 		var now = new Date();
 		while(_start < now.getTime()) {
-			var padHistorySlice = padHistorySlices[_start] || [];
-			var chatHistorySlice = chatHistorySlices[_start] || [];
-			var timeDisplay = getDisplayTime(_start);
+			var padSliceResult = getHistorySlice(_start, scope, padHistory, "timestamp");
+			var padHistorySlice = padSliceResult._slice;
+			console.log(padHistorySlice);
+			var chatSliceResult = getHistorySlice(_start, scope, chatHistory, "time");
+			var chatHistorySlice = chatSliceResult._slice;
+			var timeDisplay = getDisplayTime(_start) + "-" + getDisplayTime(_start + scope);
 			var padStatic = getPadStatic(padHistorySlice, scope);
 			var chatStatic = getChatStatic(chatHistorySlice);
 			var dataItem = {
@@ -202,7 +205,10 @@ const Analyze = React.createClass({
 				padTimePercentage : padStatic.timePercentage,
 				padTextCount : padStatic.textCount,
 				authorsLength : padStatic.authorsLength,
-				chatCount : chatStatic.chatCount
+				maxTimestampGap : padStatic. maxTimestampGap,
+				chatCount : chatStatic.chatCount,
+				chatterCount : chatStatic.chatterCount,
+				messageCount : chatStatic.messageCount,
 			};
 			data.push(dataItem);
 			_start += scope;
@@ -235,8 +241,6 @@ const Analyze = React.createClass({
 			var startMoment = _start - (_window / 2); //取样的开始时间为该时刻前半个窗口
 			var padSliceResult = getHistorySlice(startMoment, _window, padHistory, "timestamp");
 			var padHistorySlice = padSliceResult._slice;
-			console.log(padSliceResult)
-			console.log(padHistorySlice)
 			var chatSliceResult = getHistorySlice(startMoment, _window, chatHistory, "time");
 			var chatHistorySlice = chatSliceResult._slice;
 			var padStatic = getPadStatic(padHistorySlice, _window);
@@ -248,7 +252,10 @@ const Analyze = React.createClass({
 				padTimePercentage : padStatic.timePercentage,
 				padTextCount : padStatic.textCount,
 				authorsLength : padStatic.authorsLength,
-				chatCount : chatStatic.chatCount
+				maxTimestampGap : padStatic. maxTimestampGap,
+				chatCount : chatStatic.chatCount,
+				chatterCount : chatStatic.chatterCount,
+				messageCount : chatStatic.messageCount,
 			};
 			data.push(dataItem);
 			_start += scope;
@@ -271,6 +278,15 @@ const Analyze = React.createClass({
 					</td>
 					<td>
 						{item.chatCount}
+					</td>
+					<td>
+						{item.chatterCount}
+					</td>
+					<td>
+						{item.messageCount}
+					</td>
+					<td>
+						{Math.round(item.maxTimestampGap / 1000)}
 					</td>
 				</tr>
 			);
@@ -342,7 +358,7 @@ const Analyze = React.createClass({
 			confirmedButton = <button onClick={this.confirmeChangeButtonHandler.bind(this, false)}>取消</button>
 			CSVButton = <button onClick={this.exportCSV}>导出CSV</button>;
 		}
-		console.log(dataRows);
+		// console.log(dataRows);
 		return (
 			<div style={{textAlign:"center"}}>
 				<AppBar
@@ -399,6 +415,15 @@ const Analyze = React.createClass({
 								<th>关注度</th>
 								<th>编辑文章字数</th>
 								<th>聊天字数</th>
+								<th>
+									聊天人数
+								</th>
+								<th>
+									聊天消息数
+								</th>
+								<th>
+									最大时间戳间隔
+								</th>
 							</tr>
 						</thead>
 					<tbody>

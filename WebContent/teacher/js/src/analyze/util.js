@@ -61,17 +61,36 @@ export function getPadStatic(historySlice, scope) {
 			authors.push(author);
 		}
 	});
+	var maxTimestampGap = 0;
+	for(var i = 0; i < historySlice.length; i++) {
+		var currItem = historySlice[i];
+		var nextItem = historySlice[i+1];
+		if(!nextItem) {
+			break;
+		}
+		var timestampGap = nextItem.timestamp - currItem.timestamp;
+		if(timestampGap > maxTimestampGap) {
+			maxTimestampGap = timestampGap;
+		}
+	}
 	return {
 		authorsLength : authors.length,
 		textCount : textCount,
-		timePercentage : timePercentage.toFixed(2)
+		timePercentage : timePercentage.toFixed(2),
+		maxTimestampGap : maxTimestampGap
 	}
 }
 
 export function getChatStatic(historySlice) {
 	var chatCount = 0;
+	var chatters = [];
 	historySlice.forEach(function(item) {
-		chatCount += item.text.length
+		chatCount += item.text.length;
+		if(chatters.indexOf(item.userId) < 0) {
+			chatters.push(item.userId);
+		}
 	})
-	return {chatCount};
+	var chatterCount = chatters.length;
+	var messageCount = historySlice.length;
+	return {chatCount, chatterCount, messageCount};
 }

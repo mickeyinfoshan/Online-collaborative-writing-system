@@ -61870,7 +61870,7 @@
 		},
 
 		getMembers: function getMembers() {
-			var userId = this.getUserId;
+			var userId = this.getUserId();
 			if (!this.state.currentCourse) {
 				return;
 			}
