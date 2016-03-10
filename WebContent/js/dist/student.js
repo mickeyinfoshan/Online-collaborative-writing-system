@@ -26827,7 +26827,7 @@
 
 	var _popover2 = _interopRequireDefault(_popover);
 
-	var _check = __webpack_require__(291);
+	var _check = __webpack_require__(292);
 
 	var _check2 = _interopRequireDefault(_check);
 
@@ -27172,7 +27172,7 @@
 
 	var _reactAddonsUpdate2 = _interopRequireDefault(_reactAddonsUpdate);
 
-	var _controllable = __webpack_require__(288);
+	var _controllable = __webpack_require__(289);
 
 	var _controllable2 = _interopRequireDefault(_controllable);
 
@@ -28015,7 +28015,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _lodash = __webpack_require__(296);
+	var _lodash = __webpack_require__(297);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -28031,7 +28031,7 @@
 
 	var _extend2 = _interopRequireDefault(_extend);
 
-	var _popoverDefaultAnimation = __webpack_require__(289);
+	var _popoverDefaultAnimation = __webpack_require__(290);
 
 	var _popoverDefaultAnimation2 = _interopRequireDefault(_popoverDefaultAnimation);
 
@@ -57162,7 +57162,8 @@
 /* 273 */,
 /* 274 */,
 /* 275 */,
-/* 276 */
+/* 276 */,
+/* 277 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -57189,11 +57190,11 @@
 	};
 
 /***/ },
-/* 277 */,
 /* 278 */,
 /* 279 */,
 /* 280 */,
-/* 281 */
+/* 281 */,
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -57220,7 +57221,7 @@
 
 	var _iconButton2 = _interopRequireDefault(_iconButton);
 
-	var _menu = __webpack_require__(292);
+	var _menu = __webpack_require__(293);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -57564,7 +57565,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ },
-/* 282 */
+/* 283 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -58041,7 +58042,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ },
-/* 283 */
+/* 284 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -58086,7 +58087,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _menu = __webpack_require__(286);
+	var _menu = __webpack_require__(287);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -58605,7 +58606,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ },
-/* 284 */
+/* 285 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -58754,7 +58755,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 285 */
+/* 286 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -58777,7 +58778,7 @@
 
 	var _fontIcon2 = _interopRequireDefault(_fontIcon);
 
-	var _toggle = __webpack_require__(293);
+	var _toggle = __webpack_require__(294);
 
 	var _toggle2 = _interopRequireDefault(_toggle);
 
@@ -59026,7 +59027,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ },
-/* 286 */
+/* 287 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -59045,11 +59046,11 @@
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
-	var _cssEvent = __webpack_require__(294);
+	var _cssEvent = __webpack_require__(295);
 
 	var _cssEvent2 = _interopRequireDefault(_cssEvent);
 
-	var _keyLine = __webpack_require__(295);
+	var _keyLine = __webpack_require__(296);
 
 	var _keyLine2 = _interopRequireDefault(_keyLine);
 
@@ -59073,15 +59074,15 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _menuItem2 = __webpack_require__(285);
+	var _menuItem2 = __webpack_require__(286);
 
 	var _menuItem3 = _interopRequireDefault(_menuItem2);
 
-	var _linkMenuItem = __webpack_require__(284);
+	var _linkMenuItem = __webpack_require__(285);
 
 	var _linkMenuItem2 = _interopRequireDefault(_linkMenuItem);
 
-	var _subheaderMenuItem = __webpack_require__(287);
+	var _subheaderMenuItem = __webpack_require__(288);
 
 	var _subheaderMenuItem2 = _interopRequireDefault(_subheaderMenuItem);
 
@@ -59687,7 +59688,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ },
-/* 287 */
+/* 288 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -59806,7 +59807,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 288 */
+/* 289 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -59847,7 +59848,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 289 */
+/* 290 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60026,7 +60027,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 290 */
+/* 291 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60067,7 +60068,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 291 */
+/* 292 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60108,7 +60109,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 292 */
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60149,7 +60150,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 293 */
+/* 294 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60176,7 +60177,7 @@
 
 	var _paper2 = _interopRequireDefault(_paper);
 
-	var _enhancedSwitch = __webpack_require__(282);
+	var _enhancedSwitch = __webpack_require__(283);
 
 	var _enhancedSwitch2 = _interopRequireDefault(_enhancedSwitch);
 
@@ -60367,7 +60368,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 294 */
+/* 295 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -60429,7 +60430,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 295 */
+/* 296 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -60453,7 +60454,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 296 */
+/* 297 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -60464,7 +60465,7 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var debounce = __webpack_require__(297);
+	var debounce = __webpack_require__(298);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -60555,7 +60556,7 @@
 
 
 /***/ },
-/* 297 */
+/* 298 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -60566,7 +60567,7 @@
 	 * Copyright 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 	 * Available under MIT license <https://lodash.com/license>
 	 */
-	var getNative = __webpack_require__(298);
+	var getNative = __webpack_require__(299);
 
 	/** Used as the `TypeError` message for "Functions" methods. */
 	var FUNC_ERROR_TEXT = 'Expected a function';
@@ -60795,9 +60796,8 @@
 
 
 /***/ },
-/* 298 */
+/* 299 */
 171,
-/* 299 */,
 /* 300 */,
 /* 301 */,
 /* 302 */,
@@ -61062,7 +61062,7 @@
 
 	var React = __webpack_require__(2);
 	var $ = __webpack_require__(34);
-	var padServer = __webpack_require__(276);
+	var padServer = __webpack_require__(277);
 
 	var PadContent = React.createClass({
 		displayName: "PadContent",
@@ -61136,7 +61136,7 @@
 
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
 
-	var _assignment = __webpack_require__(290);
+	var _assignment = __webpack_require__(291);
 
 	var _assignment2 = _interopRequireDefault(_assignment);
 
@@ -61153,7 +61153,7 @@
 	var React = __webpack_require__(2);
 	var $ = __webpack_require__(34);
 
-	var padServer = __webpack_require__(276);
+	var padServer = __webpack_require__(277);
 
 	var PadItem = React.createClass({
 		displayName: 'PadItem',
@@ -61252,7 +61252,7 @@
 
 	'use strict';
 
-	var _leftNav = __webpack_require__(283);
+	var _leftNav = __webpack_require__(284);
 
 	var _leftNav2 = _interopRequireDefault(_leftNav);
 
@@ -61736,7 +61736,7 @@
 
 	"use strict";
 
-	var _appBar = __webpack_require__(281);
+	var _appBar = __webpack_require__(282);
 
 	var _appBar2 = _interopRequireDefault(_appBar);
 
@@ -62028,7 +62028,7 @@
 			var group = {
 				status: 0,
 				id: this.state.missionPad.group_id,
-				name: this.state.currentCourse.name + "小组"
+				name: this.state.members[0].name
 			};
 			var padName = this.state.missionPad.pad_id.split("$")[1];
 			window.edit = {
@@ -62082,9 +62082,7 @@
 					_listItem2.default,
 					{ key: key, onClick: _this.selectCourse.bind(_this, course)
 					},
-					course.name,
-					" - ",
-					course.teacher_name
+					course.name
 				);
 			});
 			var missionItems = this.state.missions.map(function (mission) {
@@ -62207,7 +62205,7 @@
 					React.createElement(
 						"div",
 						{ style: { paddingTop: 20, lineHeight: 1.5 } },
-						currentMission.content.substring(0, 20),
+						currentMission.content.substring(0, 80),
 						"...",
 						React.createElement(
 							"div",

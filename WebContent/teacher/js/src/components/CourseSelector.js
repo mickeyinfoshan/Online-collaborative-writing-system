@@ -31,7 +31,8 @@ var CourseSelector = React.createClass({
 		var selectedValue = selectedCourse.course ? selectedCourse.course.id : -1;
 		var courseItems = courses._courses.map((course)=>{
 			var key = "course" + course.id;
-			return <MenuItem value={course.id} primaryText={course.name} key={key} />;
+			var text = `${course.name}(${course.year})`;
+			return <MenuItem value={course.id} primaryText={text} key={key} />;
 		});
 		return (
 			 <SelectField value={selectedValue} onChange={this.handleChange}>

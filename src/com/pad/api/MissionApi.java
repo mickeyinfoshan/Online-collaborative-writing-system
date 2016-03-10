@@ -189,7 +189,7 @@ public class MissionApi extends BaseApi{
 		XMLWorkerHelper.getInstance().parseXHtml(writer, document, stream, Charset.forName("UTF-8"));
 		document.close();
 		File pdfFile = new File(TEMP_FILE);
-		ResponseBuilder response = Response.ok((Object) pdfFile);
+		ResponseBuilder response = Response.ok((Object) pdfFile, "application/pdf");
 		String pdfFileName = pad_id;
 		int dollarIndex = pdfFileName.indexOf("$");
 		pdfFileName = pdfFileName.substring(dollarIndex + 1);

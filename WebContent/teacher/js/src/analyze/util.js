@@ -1,6 +1,9 @@
-function getHistorySlice(start, scope, history, timekey) {
+export function getHistorySlice(start, scope, history, timekey) {
 	if(history.length == 0) {
-		return []
+		return {
+			_slice : [],
+			history : history
+		}
 	}
 	var end = start + scope;
 	var result = [];
@@ -17,7 +20,7 @@ function getHistorySlice(start, scope, history, timekey) {
 	//console.log(i);
 	history = history.slice(i);
 	return {
-		slice : result,
+		_slice : result,
 		history : history
 	}
 }
@@ -33,7 +36,7 @@ export function splitHistory(start, scope, history, timekey) {
 		_start += scope;
 		var _result = getHistorySlice(_start, scope, _history, timekey);
 		_history = _result.history;
-		result[_start] = _result.slice;
+		result[_start] = _result._slice;
 		// break;
 	}
 	//console.log(_history);
@@ -41,6 +44,7 @@ export function splitHistory(start, scope, history, timekey) {
 }
 
 export function getPadStatic(historySlice, scope) {
+	console.log(historySlice);
 	var authors = [];
 	var textCount = 0;
 	var timePercentage = 0;
@@ -67,7 +71,7 @@ export function getPadStatic(historySlice, scope) {
 export function getChatStatic(historySlice) {
 	var chatCount = 0;
 	historySlice.forEach(function(item) {
-
+		chatCount += item.text.length
 	})
 	return {chatCount};
 }

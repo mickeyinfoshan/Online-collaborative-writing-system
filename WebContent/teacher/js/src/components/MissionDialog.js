@@ -79,10 +79,16 @@ var MissionDialog = React.createClass({
 		if(this.state.end <= this.state.start) {
 			return;
 		}
+		var _start = new Date(this.state.start);
+		_start.setHours(0);
+		_start.setMinutes(0);
+		var _end = new Date(this.state.end);
+		_end.setHours(0);
+		_end.setMinutes(0);
 		var mission = {
 			name : this.state.name,
-			start : this.state.start.getTime(),
-			end : this.state.end.getTime(),
+			start : _start.getTime(),
+			end : _end.getTime(),
 			content : this.state.content
 		};
 		if(dialogController.mission == "create") {

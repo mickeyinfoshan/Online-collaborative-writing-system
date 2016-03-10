@@ -13,8 +13,12 @@ var dialogController = require("./../models/dialogController");
 var CourseDialog = React.createClass({
 
 	getInitialState: function() {
+		var now = new Date();
+		var year = now.getFullYear();
+		year = "" + year;
 		return {
-			name : "" 
+			name : "",
+			year : year, 
 		};
 	},
 
@@ -39,6 +43,12 @@ var CourseDialog = React.createClass({
 		});
 	},
 
+	setYear : function(e) {
+		this.setState({
+			year : this.refs.yearInput.getValue() 
+		});
+	},
+
 	save : function() {
 		if(!this.state.name) {
 			return;
@@ -46,7 +56,8 @@ var CourseDialog = React.createClass({
 
 		if(dialogController.course == "create") {
 			courses.create({
-				name : this.state.name
+				name : this.state.name,
+				year : this.state.year
 			});
 		}
 
@@ -56,7 +67,8 @@ var CourseDialog = React.createClass({
 			}
 			courses.update({
 				id : selectedCourse.course.id,
-				name : this.state.name
+				name : this.state.name,
+				year : this.state.year
 			});
 		}
 	},
@@ -98,7 +110,8 @@ var CourseDialog = React.createClass({
 	          onRequestClose={dialogController.hideAll.bind(dialogController)}>
 	          
 	          <TextField floatingLabelText="请输入课程名称" ref="nameInput" hintText="" onChange={this.setName} value={this.state.name} />
-	          		          
+	          &nbsp;&nbsp;
+	          <TextField floatingLabelText="请输入课程年份" ref="yearInput" hintText="" onChange={this.setYear} value={this.state.year} />		          
 	        </Dialog>
    		);
 		

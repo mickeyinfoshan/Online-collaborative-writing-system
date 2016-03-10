@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.kevinsawicki.http.HttpRequest;
 import com.pad.entity.Course;
 import com.pad.entity.CoursePadGroup;
@@ -69,6 +70,7 @@ public class CourseApi extends BaseApi {
 			@PathParam("teacher_id") String teacher_id,
 			@FormParam(value="teacher_name") String teacher_name,
 			@FormParam(value="name") String name,
+			@FormParam(value="year") String year,
 			@FormParam(value="created_time") String created_time
 			) {
 		
@@ -77,6 +79,7 @@ public class CourseApi extends BaseApi {
 		course.setName(name);
 		course.setTeacher_id(teacher_id);
 		course.setTeacher_name(teacher_name);
+		course.setYear(year);
 		Session s = getSession();
 		Transaction t = s.beginTransaction();
 		s.save(course);
@@ -202,14 +205,20 @@ public class CourseApi extends BaseApi {
 	
 	@GET
 	@Path("/{course_id}/student/count")
-	public int countStudnet(@PathParam("course_id") int course_id) {
+	@Produces(MediaType.APPLICATION_JSON)
+	public String countStudnet(@PathParam("course_id") int course_id) {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
 		String nestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" + course_id + "')";
 		String query = "select count(*) from PadGroupUser PGU where PGU.padGroupId in " + nestedQuery;
-		int count = ((Long)session.createQuery(query).uniqueResult()).intValue();
+		int studentCount = ((Long)session.createQuery(query).uniqueResult()).intValue();
+		String groupCountQuery = "select count(*) from CoursePadGroup CPG where CPG.course='" + course_id + "')";
+		int groupCount = ((Long)session.createQuery(groupCountQuery).uniqueResult()).intValue();
 		t.commit();
-		return count;
+		JSONObject result = new JSONObject();
+		result.put("studentCount", studentCount);
+		result.put("groupCount", groupCount);
+		return result.toJSONString();
 	}
 	
 	@GET

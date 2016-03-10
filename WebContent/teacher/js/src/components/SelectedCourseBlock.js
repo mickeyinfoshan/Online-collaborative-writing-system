@@ -15,6 +15,7 @@ var SelectedCourseBlock = React.createClass({
 	getInitialState: function() {
 		return {
 			studentCount : 0,
+			groupCount : 0,
 			importing : false
 		};
 	},
@@ -37,7 +38,8 @@ var SelectedCourseBlock = React.createClass({
 		var url = server + `/pad/api/course/${selectedCourse.course.id}/student/count`;
 		$.get(url, function(res) {
 			this.setState({
-				studentCount : Number(res) 
+				studentCount : Number(res.studentCount),
+				groupCount : Number(res.groupCount)
 			});
 		}.bind(this));
 	},
@@ -98,7 +100,7 @@ var SelectedCourseBlock = React.createClass({
 				<input type="file" name="file" id="studentFileInput"/>
 				<button onClick={this.importStudents}>导入学生</button>
 			</p>);
-		var studentCountText = <p>学生选课：{this.state.studentCount}人</p>;
+		var studentCountText = <p>学生选课：{this.state.studentCount}人({this.state.groupCount}组)</p>;
 		var studentBlock = this.state.studentCount > 0 ? studentCountText : importStudentButton;
 		if(this.state.importing) {
 			studentBlock = "导入学生中，请稍后"

@@ -253,7 +253,7 @@ var StudentApp = React.createClass({
 		var group = {
 			status : 0,
 			id : this.state.missionPad.group_id,
-			name : this.state.currentCourse.name + "小组"
+			name : this.state.members[0].name
 		};
 		var padName = this.state.missionPad.pad_id.split("$")[1];
 		window.edit = {
@@ -299,7 +299,7 @@ var StudentApp = React.createClass({
 			var key = "selectedCourse" + course.id;
 			return <ListItem key={key} onClick={_this.selectCourse.bind(_this, course)}
 					>
-						{course.name} - {course.teacher_name}
+						{course.name}
 					</ListItem>
 		});
 		var missionItems = this.state.missions.map((mission)=>{
@@ -391,7 +391,7 @@ var StudentApp = React.createClass({
 						<div style={{textAlign : "right", fontSize : 15, color : "#aaa"}}>{start}  -  {end}  {dateNotifyStr}</div>
 					</div>
 					<div style={{paddingTop : 20, lineHeight : 1.5}}>
-						{currentMission.content.substring(0, 20)}...
+						{currentMission.content.substring(0, 80)}...
 						<div style={{textAlign : "right", fontSize : 15, color : "#aaa", marginTop : 50}}>{currentMissionCreateTime}</div>
 					</div>
 					{toEditButton}

@@ -51442,13 +51442,24 @@
 /***/ },
 /* 273 */,
 /* 274 */,
-/* 275 */,
+/* 275 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	var host = "localhost";
+	var port = "8080";
+
+	module.exports = "http://" + (host + ":" + port);
+
+/***/ },
 /* 276 */,
 /* 277 */,
 /* 278 */,
 /* 279 */,
 /* 280 */,
-/* 281 */
+/* 281 */,
+/* 282 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -51475,7 +51486,7 @@
 
 	var _iconButton2 = _interopRequireDefault(_iconButton);
 
-	var _menu = __webpack_require__(292);
+	var _menu = __webpack_require__(293);
 
 	var _menu2 = _interopRequireDefault(_menu);
 
@@ -51819,7 +51830,6 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ },
-/* 282 */,
 /* 283 */,
 /* 284 */,
 /* 285 */,
@@ -51829,7 +51839,8 @@
 /* 289 */,
 /* 290 */,
 /* 291 */,
-/* 292 */
+/* 292 */,
+/* 293 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -51870,14 +51881,14 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 293 */,
 /* 294 */,
 /* 295 */,
 /* 296 */,
 /* 297 */,
 /* 298 */,
 /* 299 */,
-/* 300 */
+/* 300 */,
+/* 301 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -51904,7 +51915,6 @@
 	};
 
 /***/ },
-/* 301 */,
 /* 302 */,
 /* 303 */,
 /* 304 */,
@@ -51952,13 +51962,14 @@
 
 	var _util = __webpack_require__(327);
 
-	var _appBar = __webpack_require__(281);
+	var _appBar = __webpack_require__(282);
 
 	var _appBar2 = _interopRequireDefault(_appBar);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var padServer = __webpack_require__(300);
+	var padServer = __webpack_require__(301);
+	var server = __webpack_require__(275);
 
 	function getParameterByName(name, url) {
 		if (!url) url = window.location.href;
@@ -51980,6 +51991,11 @@
 		return year + "/" + month + "/" + day + " " + hour + ":" + minute;
 	}
 
+	var Modes = {
+		MOMENT: "MOMENT",
+		DURATION: "DURATION"
+	};
+
 	var Analyze = _react2.default.createClass({
 		displayName: "Analyze",
 
@@ -51989,6 +52005,8 @@
 				padHistory: [],
 				chatHistory: [],
 				confirmed: false,
+				mode: Modes.MOMENT,
+				_window: 10000, //取样窗口
 				start: now,
 				scope: 120000 //2 minutes
 			};
@@ -52032,6 +52050,9 @@
 			}
 		},
 		changeScope: function changeScope(e) {
+			if (this.state.confirmed) {
+				return;
+			}
 			var scope = e.target.value;
 			if (!_jquery2.default.isNumeric(scope)) {
 				return;
@@ -52045,6 +52066,9 @@
 			});
 		},
 		changeStartYear: function changeStartYear(e) {
+			if (this.state.confirmed) {
+				return;
+			}
 			var start = new Date(this.state.start);
 			start.setFullYear(e.target.value);
 			this.setState({
@@ -52052,6 +52076,9 @@
 			});
 		},
 		changeStartMonth: function changeStartMonth(e) {
+			if (this.state.confirmed) {
+				return;
+			}
 			var month = e.target.value;
 			var start = new Date(this.state.start);
 			start.setMinutes(month + 1);
@@ -52060,6 +52087,9 @@
 			});
 		},
 		changeStartDay: function changeStartDay(e) {
+			if (this.state.confirmed) {
+				return;
+			}
 			var start = new Date(this.state.start);
 			start.setDate(e.target.value);
 			this.setState({
@@ -52067,6 +52097,9 @@
 			});
 		},
 		changeStartHour: function changeStartHour(e) {
+			if (this.state.confirmed) {
+				return;
+			}
 			var start = new Date(this.state.start);
 			start.setHours(e.target.value);
 			this.setState({
@@ -52074,14 +52107,40 @@
 			});
 		},
 		changeStartMinute: function changeStartMinute(e) {
+			if (this.state.confirmed) {
+				return;
+			}
 			var start = new Date(this.state.start);
 			start.setMinutes(e.target.value);
 			this.setState({
 				start: start
 			});
 		},
-		getDataRows: function getDataRows() {
-			var dataRows = [];
+
+		changeMode: function changeMode(e) {
+			// this.fetchData(getParameterByName("padID"));
+			if (this.state.confirmed) {
+				return;
+			}
+			this.setState({
+				mode: e.target.value,
+				confirmed: false
+			});
+		},
+
+		getData: function getData() {
+			if (this.state.mode == Modes.MOMENT) {
+				return this.getDataByMoment();
+			}
+			if (this.state.mode == Modes.DURATION) {
+				return this.getDataByDuration();
+			}
+			return [];
+		},
+
+		//时间段
+		getDataByDuration: function getDataByDuration() {
+			var data = [];
 			var padHistory = this.state.padHistory.slice(0);
 			var chatHistory = this.state.chatHistory.slice(0);
 			var start = this.state.start.getTime();
@@ -52099,40 +52158,93 @@
 				var timeDisplay = getDisplayTime(_start);
 				var padStatic = (0, _util.getPadStatic)(padHistorySlice, scope);
 				var chatStatic = (0, _util.getChatStatic)(chatHistorySlice);
-				var row = _react2.default.createElement(
-					"tr",
-					{ key: _start },
-					_react2.default.createElement(
-						"td",
-						null,
-						timeDisplay
-					),
-					_react2.default.createElement(
-						"td",
-						null,
-						padStatic.timePercentage
-					),
-					_react2.default.createElement(
-						"td",
-						null,
-						padStatic.textCount
-					),
-					_react2.default.createElement(
-						"td",
-						null,
-						padStatic.authorsLength
-					),
-					_react2.default.createElement(
-						"td",
-						null,
-						chatStatic.chatCount
-					)
-				);
-				dataRows.push(row);
+				var dataItem = {
+					_time: _start,
+					time: timeDisplay,
+					padTimePercentage: padStatic.timePercentage,
+					padTextCount: padStatic.textCount,
+					authorsLength: padStatic.authorsLength,
+					chatCount: chatStatic.chatCount
+				};
+				data.push(dataItem);
 				_start += scope;
 			}
-			console.log(dataRows.length);
-			return dataRows;
+			// console.log(dataRows.length)
+			if (data.length < 2) {
+				return data;
+			}
+			for (var i = 1; i < data.length; i++) {
+				var prevItem = data[i - i];
+				var currItem = data[i];
+				currItem.padTextCount += prevItem.padTextCount;
+				currItem.chatCount += prevItem.chatCount;
+			}
+			return data;
+		},
+
+		//时间点取样
+		getDataByMoment: function getDataByMoment() {
+			var data = [];
+			var padHistory = this.state.padHistory.slice(0);
+			var chatHistory = this.state.chatHistory.slice(0);
+			var start = this.state.start.getTime();
+			var scope = this.state.scope;
+			var _window = this.state._window;
+			var now = new Date();
+			var _start = new Date(start);
+			_start = _start.getTime();
+			while (_start < now.getTime()) {
+				var startMoment = _start - _window / 2; //取样的开始时间为该时刻前半个窗口
+				var padSliceResult = (0, _util.getHistorySlice)(startMoment, _window, padHistory, "timestamp");
+				var padHistorySlice = padSliceResult._slice;
+				console.log(padSliceResult);
+				console.log(padHistorySlice);
+				var chatSliceResult = (0, _util.getHistorySlice)(startMoment, _window, chatHistory, "time");
+				var chatHistorySlice = chatSliceResult._slice;
+				var padStatic = (0, _util.getPadStatic)(padHistorySlice, _window);
+				var chatStatic = (0, _util.getChatStatic)(chatHistorySlice);
+				var timeDisplay = getDisplayTime(_start);
+				var dataItem = {
+					_time: _start,
+					time: timeDisplay,
+					padTimePercentage: padStatic.timePercentage,
+					padTextCount: padStatic.textCount,
+					authorsLength: padStatic.authorsLength,
+					chatCount: chatStatic.chatCount
+				};
+				data.push(dataItem);
+				_start += scope;
+			}
+			return data;
+		},
+
+		getDataRows: function getDataRows(data) {
+			return data.map(function (item) {
+				return _react2.default.createElement(
+					"tr",
+					{ key: item._time },
+					_react2.default.createElement(
+						"td",
+						null,
+						item.time
+					),
+					_react2.default.createElement(
+						"td",
+						null,
+						item.authorsLength
+					),
+					_react2.default.createElement(
+						"td",
+						null,
+						item.padTextCount
+					),
+					_react2.default.createElement(
+						"td",
+						null,
+						item.chatCount
+					)
+				);
+			});
 		},
 		confirmeChangeButtonHandler: function confirmeChangeButtonHandler(confirmed) {
 			var padID = getParameterByName("padID");
@@ -52140,27 +52252,109 @@
 				confirmed: confirmed
 			}, this.fetchData.bind(this, padID));
 		},
+		changeWindow: function changeWindow(e) {
+			this.setState({
+				_window: e.target.value * 1000
+			});
+		},
+		exportCSV: function exportCSV() {
+			var data = this.getData();
+			var fields = ["time", "authorsLength", "padTextCount", "chatCount"];
+			var rows = [];
+			data.forEach(function (dataItem) {
+				var row = [];
+				fields.forEach(function (field) {
+					row.push(dataItem[field]);
+				});
+				rows.push(row);
+			});
+
+			var postData = {
+				data: JSON.stringify(rows)
+			};
+			var url = server + "/pad/api/analyze/export/csv";
+			var fakeFormHtmlFragment = "<form style='display: none;' method='POST' action='" + url + "'>";
+			_lodash2.default.each(postData, function (postValue, postKey) {
+				var escapedKey = postKey.replace("\\", "\\\\").replace("'", "\'");
+				var escapedValue = postValue.replace("\\", "\\\\").replace("'", "\'");
+				fakeFormHtmlFragment += "<input type='hidden' name='" + escapedKey + "' value='" + escapedValue + "'>";
+			});
+			fakeFormHtmlFragment += "</form>";
+			var fakeFormDom = (0, _jquery2.default)(fakeFormHtmlFragment);
+			(0, _jquery2.default)("body").append(fakeFormDom);
+			fakeFormDom.submit();
+		},
 		render: function render() {
 			var scopeToDisplay = this.state.scope / 1000;
-			var dataRows = [];
+			var dataRows = "";
 			if (this.state.confirmed) {
-				dataRows = this.getDataRows();
+				var data = this.getData();
+				dataRows = this.getDataRows(data);
 			}
 			var year = this.state.start.getFullYear();
 			var month = this.state.start.getMonth() + 1;
 			var day = this.state.start.getDate();
 			var hour = this.state.start.getHours();
 			var minute = this.state.start.getMinutes();
+			var _windowInputValue = Math.round(this.state._window / 1000);
+			var windowInput = _react2.default.createElement(
+				"span",
+				null,
+				"取样窗口：",
+				_react2.default.createElement("input", { value: _windowInputValue, onChange: this.changeWindow })
+			);
+			if (this.state.mode == Modes.DURATION) {
+				windowInput = "";
+			}
+			var confirmedButton = _react2.default.createElement(
+				"button",
+				{ onClick: this.confirmeChangeButtonHandler.bind(this, true) },
+				"确定"
+			);
+			var CSVButton = "";
+			if (this.state.confirmed) {
+				confirmedButton = _react2.default.createElement(
+					"button",
+					{ onClick: this.confirmeChangeButtonHandler.bind(this, false) },
+					"取消"
+				);
+				CSVButton = _react2.default.createElement(
+					"button",
+					{ onClick: this.exportCSV },
+					"导出CSV"
+				);
+			}
+			console.log(dataRows);
 			return _react2.default.createElement(
 				"div",
 				{ style: { textAlign: "center" } },
 				_react2.default.createElement(_appBar2.default, {
 					title: "数据分析",
-					showMenuIconButton: false
+					showMenuIconButton: false,
+					style: { textAlign: "left" }
 				}),
 				_react2.default.createElement(
 					"div",
 					null,
+					_react2.default.createElement(
+						"span",
+						null,
+						"模式选择：",
+						_react2.default.createElement(
+							"select",
+							{ onChange: this.changeMode },
+							_react2.default.createElement(
+								"option",
+								{ value: Modes.MOMENT },
+								"时间点取样"
+							),
+							_react2.default.createElement(
+								"option",
+								{ value: Modes.DURATION },
+								"时间段累计"
+							)
+						)
+					),
 					_react2.default.createElement(
 						"span",
 						null,
@@ -52196,16 +52390,9 @@
 						_react2.default.createElement("input", { value: scopeToDisplay, onChange: this.changeScope }),
 						"秒"
 					),
-					_react2.default.createElement(
-						"button",
-						{ onClick: this.confirmeChangeButtonHandler.bind(this, true) },
-						"确定"
-					),
-					_react2.default.createElement(
-						"button",
-						{ onClick: this.confirmeChangeButtonHandler.bind(this, false) },
-						"暂停"
-					)
+					windowInput,
+					confirmedButton,
+					CSVButton
 				),
 				_react2.default.createElement(
 					"div",
@@ -52227,17 +52414,12 @@
 								_react2.default.createElement(
 									"th",
 									null,
-									"时间比例"
+									"关注度"
 								),
 								_react2.default.createElement(
 									"th",
 									null,
 									"编辑文章字数"
-								),
-								_react2.default.createElement(
-									"th",
-									null,
-									"参与编辑人数"
 								),
 								_react2.default.createElement(
 									"th",
@@ -52268,12 +52450,16 @@
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
+	exports.getHistorySlice = getHistorySlice;
 	exports.splitHistory = splitHistory;
 	exports.getPadStatic = getPadStatic;
 	exports.getChatStatic = getChatStatic;
 	function getHistorySlice(start, scope, history, timekey) {
 		if (history.length == 0) {
-			return [];
+			return {
+				_slice: [],
+				history: history
+			};
 		}
 		var end = start + scope;
 		var result = [];
@@ -52290,7 +52476,7 @@
 		//console.log(i);
 		history = history.slice(i);
 		return {
-			slice: result,
+			_slice: result,
 			history: history
 		};
 	}
@@ -52306,7 +52492,7 @@
 			_start += scope;
 			var _result = getHistorySlice(_start, scope, _history, timekey);
 			_history = _result.history;
-			result[_start] = _result.slice;
+			result[_start] = _result._slice;
 			// break;
 		}
 		//console.log(_history);
@@ -52314,6 +52500,7 @@
 	}
 
 	function getPadStatic(historySlice, scope) {
+		console.log(historySlice);
 		var authors = [];
 		var textCount = 0;
 		var timePercentage = 0;
@@ -52339,7 +52526,9 @@
 
 	function getChatStatic(historySlice) {
 		var chatCount = 0;
-		historySlice.forEach(function (item) {});
+		historySlice.forEach(function (item) {
+			chatCount += item.text.length;
+		});
 		return { chatCount: chatCount };
 	}
 
