@@ -19,7 +19,8 @@ var MissionDialog = React.createClass({
 			name : "",
 			start : null,
 			end : null,
-			content : "" 
+			content : "",
+			desc : "" 
 		};
 	},
 
@@ -33,12 +34,14 @@ var MissionDialog = React.createClass({
 				_this.state.start = null;
 				_this.state.end = null;
 				_this.state.content = "";
+				_this.state.desc = "";
 			}
 			else if(dialogController.mission == "update") {
 				_this.state.name = selectedMission.mission.name;
 				_this.state.start = new Date(Number(selectedMission.mission.start));
 				_this.state.end = new Date(Number(selectedMission.mission.end));
 				_this.state.content = selectedMission.mission.content || "";
+				_this.state.desc = selectedMission.mission.desc || "";
 			}
 			_this.forceUpdate();
 		}, "DialogController.change");
@@ -49,7 +52,11 @@ var MissionDialog = React.createClass({
 			name : this.refs.nameInput.getValue() 
 		});
 	},
-
+	setDesc : function(e) {
+		this.setState({
+			desc : this.refs.descInput.getValue() 
+		});
+	},
 	setStart : function(e, date) {
 		this.setState({
 			start : date 
@@ -89,7 +96,8 @@ var MissionDialog = React.createClass({
 			name : this.state.name,
 			start : _start.getTime(),
 			end : _end.getTime(),
-			content : this.state.content
+			content : this.state.content,
+			desc : this.state.desc
 		};
 		if(dialogController.mission == "create") {
 			missions.create(mission);
@@ -145,12 +153,17 @@ var MissionDialog = React.createClass({
 	          <TextField floatingLabelText="请输入作业名称" 
 	          			ref="nameInput" 
 	          			hintText="" onChange={this.setName} value={this.state.name} /><br />
-	          开始：<DatePicker
+	          <TextField floatingLabelText="请输入作业简介" 
+      		  			ref="descInput"
+      		  			rowsMax={5}
+	          			hintText="" onChange={this.setDesc} value={this.state.desc} 
+	          			multiLine={true} />
+	          <DatePicker
         		hintText="开始日期"
         		value={this.state.start}
         		onChange={this.setStart}
       		  />
-	          结束：<DatePicker
+	          <DatePicker
         		hintText="结束日期"
         		value={this.state.end}
         		onChange={this.setEnd}

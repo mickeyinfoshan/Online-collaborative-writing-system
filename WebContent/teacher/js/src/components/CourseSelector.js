@@ -31,7 +31,7 @@ var CourseSelector = React.createClass({
 		var selectedValue = selectedCourse.course ? selectedCourse.course.id : -1;
 		var courseItems = courses._courses.map((course)=>{
 			var key = "course" + course.id;
-			var text = `${course.name}(${course.year})`;
+			var text = `${course.name}`;
 			return <MenuItem value={course.id} primaryText={text} key={key} />;
 		});
 		return (

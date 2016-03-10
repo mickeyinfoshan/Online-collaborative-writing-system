@@ -1,5 +1,6 @@
 var {Model} = require("../data-station/index");
 var $ = require("jquery");
+var _ = require("lodash");
 
 var user = require("./user");
 
@@ -22,6 +23,9 @@ class Years extends Model {
 		var url = server + `/pad/api/course/teacher/${user.id}/list/years`;
 		var _this = this;
 		$.get(url, function(res) {
+			res = _.uniqBy(res, function(e) {
+				return e;
+			});
 			_this.set({
 				_years : res
 			})

@@ -391,7 +391,7 @@ var StudentApp = React.createClass({
 						<div style={{textAlign : "right", fontSize : 15, color : "#aaa"}}>{start}  -  {end}  {dateNotifyStr}</div>
 					</div>
 					<div style={{paddingTop : 20, lineHeight : 1.5}}>
-						{currentMission.content.substring(0, 80)}...
+						{currentMission.desc}
 						<div style={{textAlign : "right", fontSize : 15, color : "#aaa", marginTop : 50}}>{currentMissionCreateTime}</div>
 					</div>
 					{toEditButton}

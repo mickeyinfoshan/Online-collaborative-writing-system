@@ -28,7 +28,7 @@ var YearSelector = React.createClass({
 	},
 	render: function() {
 		console.log("render");
-		var selectedValue = selectedYear.year ? selectedYear.year. : -1;
+		var selectedValue = selectedYear.year ? selectedYear.year : -1;
 		var yearItems = years._years.map((year)=>{
 			var key = "year" + year;
 			var text = `${year}`;

@@ -20,6 +20,9 @@ class Missions extends Model {
 		var url = server + `/pad/api/course/${selectedCourse.course.id}/mission/list`;
 		var _this = this;
 		$.get(url, function(res) {
+			res.forEach((m)=>{
+				m.desc = m.description
+			})
 			_this.set({
 				_missions : res
 			});
