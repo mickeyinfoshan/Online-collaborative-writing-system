@@ -18,7 +18,7 @@
 		<property name="url"
 			value="jdbc:mysql://localhost:3306/pad_for_real_data?characterEncoding=UTF-8" />
 		<property name="username" value="root" />
-		<property name="password" value="" />
+		<property name="password" value="123456" />
 	</bean>
 	<bean id="mysf"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
