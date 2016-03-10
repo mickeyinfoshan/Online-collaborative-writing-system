@@ -1,5 +1,6 @@
 var React = require('react');
 var Base = require("./data-station/index").Base;
+var YearSelector = require("./components/YearSelector");
 var CourseSelector = require("./components/CourseSelector");
 var MissionSelector = require("./components/MissionSelector");
 var MissionDialog = require("./components/MissionDialog");
@@ -59,6 +60,7 @@ var App = React.createClass({
 			<div>
 				<Header />
 				<div style={{borderBottom : "solid 1px #ccc", padding : 28}}>
+					年份：<YearSelector />
 					课程：<CourseSelector />
 					<IconButton 
 						tooltip="添加课程" 
