@@ -95,7 +95,7 @@ var StudentApp = React.createClass({
 	},
 
 	getMembers : function() {
-		var userId = this.getUserId;
+		var userId = this.getUserId();
 		if(!this.state.currentCourse) {
 			return;
 		}
