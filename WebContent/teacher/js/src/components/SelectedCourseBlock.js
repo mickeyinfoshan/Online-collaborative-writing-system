@@ -98,7 +98,8 @@ var SelectedCourseBlock = React.createClass({
 		var importStudentButton = (
 			<p>
 				<input type="file" name="file" id="studentFileInput"/>
-				<button onClick={this.importStudents}>导入学生</button>
+				<button onClick={this.importStudents}>导入学生</button><br />
+				<a href="/pad/template.xlsx" target="_blank">导入模板下载</a>
 			</p>);
 		var studentCountText = <p>学生选课：{this.state.studentCount}人({this.state.groupCount}组)</p>;
 		var studentBlock = this.state.studentCount > 0 ? studentCountText : importStudentButton;

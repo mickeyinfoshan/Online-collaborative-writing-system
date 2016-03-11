@@ -57664,7 +57664,10 @@
 				var _this = this;
 				$.post(url, course, function (res) {
 					years.init();
-				});
+					if (selectedYear.year) {
+						this.init();
+					}
+				}.bind(this));
 			}
 		}, {
 			key: "update",
@@ -57679,7 +57682,10 @@
 				var _this = this;
 				$.post(url, course, function (res) {
 					years.init();
-				});
+					if (selectedYear.year) {
+						this.init();
+					}
+				}.bind(this));
 			}
 		}, {
 			key: "delete",
@@ -65669,6 +65675,12 @@
 					"button",
 					{ onClick: this.importStudents },
 					"导入学生"
+				),
+				React.createElement("br", null),
+				React.createElement(
+					"a",
+					{ href: "/pad/template.xlsx", target: "_blank" },
+					"导入模板下载"
 				)
 			);
 			var studentCountText = React.createElement(

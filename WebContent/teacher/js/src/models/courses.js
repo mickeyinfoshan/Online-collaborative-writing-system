@@ -43,7 +43,10 @@ class Courses extends Model {
 		var _this = this;
 		$.post(url, course, function(res) {
 			years.init();
-		});
+			if(selectedYear.year) {
+				this.init();
+			}
+		}.bind(this));
 	}
 
 	update(course) {
@@ -57,7 +60,10 @@ class Courses extends Model {
 		var _this = this;
 		$.post(url, course, function(res) {
 			years.init();
-		});
+			if(selectedYear.year) {
+				this.init();
+			}
+		}.bind(this));
 	}
 
 	delete(course) {

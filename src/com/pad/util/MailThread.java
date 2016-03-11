@@ -55,7 +55,7 @@ public class MailThread extends Thread {
 		String text = "";
 		Mission mission = getMission();
 		Course course = mission.getCourse();
-		text = text + "课程：" + course.getName() + "（" + course.getTeacher_name() +"）" + "\n";
+		text = text + "课程：" + course.getName() + "\n";
 		text = text +"作业：" + mission.getName() + "\n";
 		long startTimeStamp = Long.parseLong(mission.getStart());
 		long endTimeStamp = Long.parseLong(mission.getEnd());
@@ -65,8 +65,9 @@ public class MailThread extends Thread {
 		String startString = df.format(start);
 		String endString = df.format(end);
 		text = text + "时间：" + startString + "  -  " + endString + "\n";
-		text = text + "作业内容：" + mission.getContent() + "\n";
-		text = text + "<a href='http://121.40.97.89:8080/pad'>跳转链接</a>";
+		text = text + "作业简介：" + mission.getDescription() + "\n";
+		text = text + "直达链接：http://121.40.97.89:8080/pad\n";
+		text += "（该邮件由系统自动发出，请勿回复）";
 		return text;
 	}
 	public String getSubjectText() {
