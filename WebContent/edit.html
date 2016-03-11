@@ -158,7 +158,7 @@
                     pad.createAuthorIfNotExistsFor($.user.name, $.user.authorId, function () {
                         $.user.innerAuthorId = this.data.authorID;
                         pad.createSession(window.opener.edit.groupID, this.data.authorID, function () {
-                            var editor, userName, pid, temp, i , group, src;
+                            var editor, userName, pid, temp, i , group, src, lastTime;
                             pid = window.opener.edit.groupID + "$" + window.opener.edit.name;
                             group = window.opener.edit.group;
                             userName = $.user.name;
@@ -191,6 +191,14 @@
                                                 if ($.cUsers && $.cUsers.length) {
                                                     pad.getLastVersionsByUser(pid, $.cUsers, function () {
                                                         var _versions = this.data.version;
+
+                                                        //取得当前用户最后操作pad时间
+                                                        for(var i = 0; i < _versions.length; i++) {
+                                                            if(_versions[i].author.id == $.user.innerAuthorId) {
+                                                                lastTime = _versions[i].timestamp;
+                                                            }
+                                                        }
+
                                                         handler.addAllFocusChart2($("#chartRight"), _versions);
                                                         $("#zzd_title").css({"display": "block"});
                                                         setTimeout(fn4, 5000);
@@ -206,9 +214,29 @@
                                                     $.fn3Time = setTimeout(fn3, 30000);
                                                 });
                                             }
+                                            
+                                            //存储专注度
+                                            function saveFocus() {
+
+                                                var temp, focus, curTime = new Date().getTime();
+
+                                                temp = curTime - lastTime;
+                                                temp /= 1000;
+                                                focus = handler.getBaseFocus(temp);
+
+                                                if(lastTime !== undefined) {
+                                                    pad.appendFocusMessage(pid, $.user.innerAuthorId, userName, curTime, focus, function() {
+                                                        // console.log(this);
+                                                    });
+                                                    setTimeout(saveFocus, 1000 * 20);
+                                                }else {
+                                                    setTimeout(saveFocus, 1000 * 20);
+                                                }
+                                            }
 
                                             fn3();//更新在线人数
                                             fn4();//测试拉取每个参与者的最后一个版本号.
+                                            saveFocus();
                                             fn2();//启动贡献值查询和行为图查询
                                         });
                                     }
