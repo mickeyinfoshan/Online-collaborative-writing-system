@@ -19,6 +19,7 @@
 			value="jdbc:mysql://localhost:3306/pad_for_real_data?characterEncoding=UTF-8" />
 		<property name="username" value="root" />
 		<property name="password" value="" />
+		
 	</bean>
 	<bean id="mysf"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
@@ -35,6 +36,13 @@
 				hibernate.dialect =org.hibernate.dialect.MySQLDialect
 				hibernate.show_sql=true
 				hibernate.hbm2ddl.auto=update
+				hibernate.connection.provider_class=org.hibernate.connection.C3P0ConnectionProvider
+				hibernate.c3p0.acquire_increment=5
+				hibernate.c3p0.idle_test_period=1800
+				hibernate.c3p0.max_size=600
+				hibernate.c3p0.max_statements=50
+				hibernate.c3p0.min_size=5
+				hibernate.c3p0.timeout=1800
 			</value>
 		</property>
 	</bean>
@@ -55,11 +63,19 @@
      		</list>
  		</property>
 		<property name="hibernateProperties">
+		
 			<value>
 				hibernate.dialect =org.hibernate.dialect.MySQLDialect
 				hibernate.show_sql=true
 				hibernate.hbm2ddl.auto=update
 				hibernate.current_session_context_class=thread
+				hibernate.connection.provider_class=org.hibernate.connection.C3P0ConnectionProvider
+				hibernate.c3p0.acquire_increment=5
+				hibernate.c3p0.idle_test_period=1800
+				hibernate.c3p0.max_size=600
+				hibernate.c3p0.max_statements=50
+				hibernate.c3p0.min_size=5
+				hibernate.c3p0.timeout=1800
 			</value>
 		</property>
 	</bean>

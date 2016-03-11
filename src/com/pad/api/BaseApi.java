@@ -12,6 +12,7 @@ public abstract class BaseApi {
 
 	protected Session getSession() {
 		Session session = null;
+		System.out.println(this.sessionFactory.getStatistics().getConnectCount());
 		session = this.sessionFactory.getCurrentSession();
 		return session;
 	}

@@ -38,6 +38,7 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 	 * 获取当前工作的Session
 	 */
 	protected Session getSession() {
+		System.out.println(this.sessionFactory.getStatistics().getConnectCount());
 		return this.sessionFactory.getCurrentSession();
 	}
 

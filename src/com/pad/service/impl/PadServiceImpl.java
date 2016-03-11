@@ -44,6 +44,7 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 		String getGroupsQuery = "select padGroupId from CoursePadGroup _CPG where _CPG.course in " + getCourseQuery;
 		System.out.println(getGroupsQuery);
 		List<String> groupIds = (List<String>)session.createQuery(getGroupsQuery).list();
+		session.close();
 //		System.out.println(groupIds.toArray().toString());
 		String groupIdsString = com.alibaba.fastjson.JSON.toJSONString(groupIds.toArray());
 		groupIdsString = groupIdsString.replace('[', '(');
