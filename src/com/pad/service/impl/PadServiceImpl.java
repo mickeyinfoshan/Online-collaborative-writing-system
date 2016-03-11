@@ -50,6 +50,7 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 		groupIdsString = groupIdsString.replace(']', ')');
 		groupIdsString = groupIdsString.replace('\"', '\'');
 		System.out.println(groupIdsString);
+		session.close();
 		List<Pad> pads = padDao.findByHQL("from Pad P where P.gid in " + groupIdsString);
 		if (StaticData.needUpdate()) {// 需要更新
 			Date cd = new Date();
