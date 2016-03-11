@@ -203,7 +203,7 @@ define(function (require, exports, module) {
                     fillToZero: true
                 }
             },
-            series: data.series,
+            series: data.seriesT,
             legend: {
                 show: true,
                 placement: 'outsideGrid',
@@ -229,7 +229,7 @@ define(function (require, exports, module) {
                     fillToZero: true
                 }
             },
-            series: data.series,
+            series: data.seriesW,
             legend: {
                 show: true,
                 placement: 'outsideGrid',

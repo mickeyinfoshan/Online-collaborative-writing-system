@@ -47,36 +47,42 @@ public class PadAction extends ActionSupport implements SessionAware,
 				pad.setWordValue(Integer.parseInt(wordValue));
 				pad.setTimeValue(Integer.parseInt(timeValue));
 				List<Pad> pads = padService.updatePadAndGroup(pad);
-				int code = 0;
-				String msg = "ok";
-				if (pads != null) {
-
-					Pad ap = pads.get(1);
-					if (ap.getStatus() < 2) {
-						code = 3;
-						msg = "在线编辑状态的文章很少！";
-					}
-
-					JsonConfig cfg = new JsonConfig();
-					cfg.setJsonPropertyFilter(new PropertyFilter() {
-						public boolean apply(Object source, String name,
-								Object value) {
-							return false;
-						}
-					});
-					cfg.setExcludes(new String[] { "handler",
-							"hibernateLazyInitializer" });
-					JSONArray ja = JSONArray.fromObject(pads.toArray(), cfg);
-					jo.element("data", ja);
-				} else {
-					code = 2;
-					msg = "当前无法获取数据";
-				}
-
-				jo.put("status", 0);
-				jo.put("message", msg);
-				jo.put("code", code);
-				String json = jo.toString();
+//				int code = 0;
+//				String msg = "ok";
+//				if (pads != null) {
+//
+//					Pad ap = pads.get(1);
+//					if (ap.getStatus() < 2) {
+//						code = 3;
+//						msg = "在线编辑状态的文章很少！";
+//					}
+//
+//					JsonConfig cfg = new JsonConfig();
+//					cfg.setJsonPropertyFilter(new PropertyFilter() {
+//						public boolean apply(Object source, String name,
+//								Object value) {
+//							return false;
+//						}
+//					});
+//					cfg.setExcludes(new String[] { "handler",
+//							"hibernateLazyInitializer" });
+//					JSONArray ja = JSONArray.fromObject(pads.toArray(), cfg);
+//					jo.element("data", ja);
+//				} else {
+//					code = 2;
+//					msg = "当前无法获取数据";
+//				}
+//
+//				jo.put("status", 0);
+//				jo.put("message", msg);
+//				jo.put("code", code);
+//				String json = jo.toString();
+				com.alibaba.fastjson.JSONObject res = new com.alibaba.fastjson.JSONObject();
+				res.put("status", 0);
+				res.put("data", pads.toArray());
+				res.put("message", "");
+				res.put("code", 0);
+				String json = res.toJSONString();
 				response.getWriter().write(json);
 			} else {
 				jo.put("status", 1);

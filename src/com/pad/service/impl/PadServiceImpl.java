@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.pad.dao.PadDao;
 import com.pad.entity.Pad;
 import com.pad.service.PadService;
@@ -12,6 +16,17 @@ import com.pad.util.StaticData;
 public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 	private PadDao padDao;
 
+	@Autowired
+	protected SessionFactory sessionFactory;
+	
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+	
 	public PadDao getPadDao() {
 		return padDao;
 	}
@@ -24,7 +39,18 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 	@Override
 	public List<Pad> updatePadAndGroup(Pad pad) {
 		// TODO Auto-generated method stub
-
+		Session session = getSessionFactory().openSession();
+		String getCourseQuery = "(select course from CoursePadGroup CPG where CPG.padGroupId='" + pad.getGid() + "')";
+		String getGroupsQuery = "select padGroupId from CoursePadGroup _CPG where _CPG.course in " + getCourseQuery;
+		System.out.println(getGroupsQuery);
+		List<String> groupIds = (List<String>)session.createQuery(getGroupsQuery).list();
+//		System.out.println(groupIds.toArray().toString());
+		String groupIdsString = com.alibaba.fastjson.JSON.toJSONString(groupIds.toArray());
+		groupIdsString = groupIdsString.replace('[', '(');
+		groupIdsString = groupIdsString.replace(']', ')');
+		groupIdsString = groupIdsString.replace('\"', '\'');
+		System.out.println(groupIdsString);
+		List<Pad> pads = padDao.findByHQL("from Pad P where P.gid in " + groupIdsString);
 		if (StaticData.needUpdate()) {// 需要更新
 			Date cd = new Date();
 			pad.setLastUpdate(cd.getTime());
@@ -45,7 +71,7 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 				padDao.deletePad(cd.getTime());
 			}
 			// 获取数据库中所有数据
-			List<Pad> pads = padDao.findByHQL("from Pad");
+			
 			// 没有数据直接返回
 			if (pads == null) {
 				return null;
@@ -79,9 +105,11 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 			results.add(pad);
 
 			StaticData.pads = results;
-			return StaticData.pads;
+			
+			pads = padDao.findByHQL("from Pad P where P.gid in " + groupIdsString);
+			return pads;
 		} else {// 不需要更新
-			return StaticData.pads;
+			return pads;
 		}
 	}
 

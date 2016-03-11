@@ -388,10 +388,10 @@ var StudentApp = React.createClass({
 				<div style={{height : "100%" , padding : 18, boxSizing : "border-box", width : "44%"}}>
 					<div style={{borderBottom : "solid 1px #ccc", paddingBottom : 15}}>
 						<div style={{fontSize : 21, textAlign : "center", marginBottom : 15}}>{this.state.currentMission.name}</div>
-						<div style={{textAlign : "right", fontSize : 15, color : "#aaa"}}>{start}  -  {end}  {dateNotifyStr}</div>
+						<div style={{textAlign : "right", fontSize : 15, color : "#333"}}>开始时间：{start}  -  结束时间{end}  {dateNotifyStr}</div>
 					</div>
 					<div style={{paddingTop : 20, lineHeight : 1.5}}>
-						{currentMission.desc}
+						{currentMission.description}
 						<div style={{textAlign : "right", fontSize : 15, color : "#aaa", marginTop : 50}}>{currentMissionCreateTime}</div>
 					</div>
 					{toEditButton}

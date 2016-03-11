@@ -62196,9 +62196,10 @@
 						),
 						React.createElement(
 							"div",
-							{ style: { textAlign: "right", fontSize: 15, color: "#aaa" } },
+							{ style: { textAlign: "right", fontSize: 15, color: "#333" } },
+							"开始时间：",
 							start,
-							"  -  ",
+							"  -  结束时间",
 							end,
 							"  ",
 							dateNotifyStr
@@ -62207,7 +62208,7 @@
 					React.createElement(
 						"div",
 						{ style: { paddingTop: 20, lineHeight: 1.5 } },
-						currentMission.desc,
+						currentMission.description,
 						React.createElement(
 							"div",
 							{ style: { textAlign: "right", fontSize: 15, color: "#aaa", marginTop: 50 } },
