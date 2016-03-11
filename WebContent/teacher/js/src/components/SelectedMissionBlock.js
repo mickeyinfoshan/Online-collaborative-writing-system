@@ -56,9 +56,9 @@ var SelectedMissionBlock = React.createClass({
 				<p>创建时间：{created_time}</p>
 				<p>开始时间：{start}</p>
 				<p>结束时间：{end}</p>
-				<p >作业内容：</p>
+				<p >作业简介：</p>
 				<p style={{wordBreak : "break-all", lineHeight: 1.5}}>
-					{selectedMission.mission.content.substring(0,20)}...
+					{selectedMission.mission.desc}
 				</p>
 				<p>
 					<FlatButton label="编辑" secondary={true} onClick={()=>{dialogController.show("mission", "update")}} />

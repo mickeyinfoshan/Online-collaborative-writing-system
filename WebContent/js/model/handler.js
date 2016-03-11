@@ -226,36 +226,79 @@ define(function (require, explore, module) {
                     "pad.pname": pname
                 }, function (json) {
                     console.log(json);
-                    if (json.code == 3) {
-                        //$("#" + id).empty();
-                        return;
-                    }
-                    var t = json.data, temp, series = [], ticksT = ["时间(分)"], ticksW = ["字数(个)"];
-                    var dataT = [], dataW = [], bt, bw;
-                    for (var i = 0; i < t.length; i++) {
-                        if (t[i].status == -1) {
-                            bt = t[i].timeValue;
-                            bw = t[i].wordValue;
-                            break;
+                    // if (json.code == 3) {
+                    //     //$("#" + id).empty();
+                    //     return;
+                    // }
+                    var data = json.data, ticksT = ["时间(分)"], ticksW = ["字数(个)"];
+                    var seriesW, seriesT;
+                    seriesW = seriesT = [{label : "最高值"},{label : "平均值"}, {label : "本组值"}];
+                    var maxTimeValue = 0;
+                    var maxWordValue = 0;
+                    var averageTimeValue = 0;
+                    var averageWordValue = 0;
+                    var myTimeValue = 0;
+                    var myWorldValue = 0;
+                    var sumTimeValue = 0;
+                    var sumWordValue = 0;
+                    for(var i = 0; i < data.length; i++) {
+                        var dataItem = data[i];
+                        if(dataItem.gid == gid) {
+                            myTimeValue = dataItem.timeValue;
+                            myWorldValue = dataItem.wordValue;
                         }
-                    }
-                    for (var i = 0; i < t.length; i++) {
-                        dataT.push([t[i].timeValue / 60]);
-                        dataW.push([t[i].wordValue]);
-                        switch (t[i].status) {
-                            case -1:
-                                temp = "最高值(" + t[i].gname + "小组)";
-                                break;
-                            case -2:
-                                temp = "本组值";
-                                break;
-                            default :
-                                temp = "平均值";
-                                break;
+                        if(dataItem.timeValue > maxTimeValue) {
+                            maxTimeValue = dataItem.timeValue;
+                            seriesT[0].label = "最高值(" + dataItem.gname + "小组)";
                         }
-                        series.push({label: temp});
+                        if(dataItem.wordValue > maxWordValue) {
+                            maxWordValue = dataItem.wordValue;
+                            seriesW[0].label = "最高值(" + dataItem.gname + "小组)";
+                        }
+                        sumWordValue += dataItem.wordValue;
+                        sumTimeValue += dataItem.timeValue;
                     }
-                    plot.padsOrder({dataT: dataT, dataW: dataW, ticksW: ticksW, ticksT: ticksT, series: series}, "小组动态时间信息", "小组动态字数信息", idT, idW);
+                    averageTimeValue = sumTimeValue / data.length;
+                    averageWordValue = sumWordValue / data.length;
+                    var dataT = [[maxTimeValue], [averageTimeValue], [myTimeValue]];
+                    var dataW = [[maxWordValue], [averageWordValue], [myWorldValue]];
+                    for(var j = 0; j < dataT.length; j++) {
+                        dataT[j][0] /= 60;
+                    }
+                    // console.log("t: ");
+                    // console.log(t);
+                    // var dataT = [], dataW = [], bt, bw;
+                    // for (var i = 0; i < t.length; i++) {
+                    //     if (t[i].status == -1) {
+                    //         bt = t[i].timeValue;
+                    //         bw = t[i].wordValue;
+                    //         break;
+                    //     }
+                    // }
+                    // for (var i = 0; i < t.length; i++) {
+                    //     dataT.push([t[i].timeValue / 60]);
+                    //     dataW.push([t[i].wordValue]);
+                    //     switch (t[i].status) {
+                    //         case -1:
+                    //             temp = "最高值(" + t[i].gname + "小组)";
+                    //             break;
+                    //         case -2:
+                    //             temp = "本组值";
+                    //             break;
+                    //         default :
+                    //             temp = "平均值";
+                    //             break;
+                    //     }
+                    //     series.push({label: temp});
+                    // }
+                    plot.padsOrder({ dataT: dataT, 
+                                     dataW: dataW, 
+                                     ticksW: ticksW, 
+                                     ticksT: ticksT, 
+                                     seriesT: seriesT,
+                                     seriesW: seriesW
+                                    }, 
+                                    "小组动态时间信息", "小组动态字数信息", idT, idW);
                 });
         };
 

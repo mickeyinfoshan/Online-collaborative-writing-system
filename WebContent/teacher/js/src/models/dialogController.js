@@ -1,5 +1,6 @@
 var {Model} = require("../data-station/index");
 
+var years = require("./years");
 var courses = require("./courses");
 var missions = require("./missions");
 var user = require("./user");
@@ -44,6 +45,7 @@ class DialogController extends Model {
 
 var dialogController = new DialogController();
 
+dialogController.addSource(years, "Years.change");
 dialogController.addSource(missions, "Missions.change");
 dialogController.addSource(user, "User.change");
 dialogController.addSource(courses, "Courses.change");
@@ -59,6 +61,8 @@ dialogController.addHandler(function(){
 	}
 }.bind(dialogController), "User.change");
 dialogController.addHandler(dialogController.hideAll.bind(dialogController), "Courses.change");
+dialogController.addHandler(dialogController.hideAll.bind(dialogController), "Years.change");
+
 dialogController.addHandler(function() {
 	if(selectedPad.pad) {
 		this.show("pad");

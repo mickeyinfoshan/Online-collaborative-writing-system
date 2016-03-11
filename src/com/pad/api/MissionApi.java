@@ -82,7 +82,8 @@ public class MissionApi extends BaseApi{
 			@FormParam(value="name") String name,
 			@FormParam(value="start") String start,
 			@FormParam(value="end") String end,
-			@FormParam(value="content") String content
+			@FormParam(value="content") String content,
+			@FormParam(value="desc") String desc
 		) {
 		
 		Session session = getSession();
@@ -92,6 +93,7 @@ public class MissionApi extends BaseApi{
 		mission.setContent(content);
 		mission.setStart(start);
 		mission.setEnd(end);
+		mission.setDescription(desc);
 		session.save(mission);
 		t.commit();
 		return "200";

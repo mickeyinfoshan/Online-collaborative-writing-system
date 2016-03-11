@@ -5,6 +5,9 @@ var user = require("./user");
 
 var server = require("../utils/server");
 
+var selectedYear = require("./selectedYear");
+var years = require("./years")
+
 class Courses extends Model {
 	
 	constructor() {
@@ -13,13 +16,13 @@ class Courses extends Model {
 	}
 
 	init() {
-		if(!user.id) {
+		if(!user.id || !selectedYear.year) {
 			this.set({
 				_courses : []
 			});
 			return;
 		}
-		var url = server + `/pad/api/course/teacher/${user.id}/list`;
+		var url = server + `/pad/api/course/teacher/${user.id}/list/by/year/${selectedYear.year}`;
 		var _this = this;
 		$.get(url, function(res) {
 			_this.set({
@@ -39,7 +42,7 @@ class Courses extends Model {
 		var url = server + `/pad/api/course/teacher/${user.id}/create`;
 		var _this = this;
 		$.post(url, course, function(res) {
-			_this.init();
+			years.init();
 		});
 	}
 
@@ -53,7 +56,7 @@ class Courses extends Model {
 		var url = server + `/pad/api/course/${course.id}/update/`;
 		var _this = this;
 		$.post(url, course, function(res) {
-			_this.init();
+			years.init();
 		});
 	}
 
@@ -72,7 +75,7 @@ class Courses extends Model {
 
 var courses = new Courses();
 
-courses.addSource(user, "User.change");
-courses.addHandler(courses.init.bind(courses), "User.change");
+courses.addSource(selectedYear, "SelectedYear.change");
+courses.addHandler(courses.init.bind(courses), "SelectedYear.change");
 
 module.exports = courses;

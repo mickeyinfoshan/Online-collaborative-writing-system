@@ -64,6 +64,38 @@ public class CourseApi extends BaseApi {
 		return (Course[])(list.toArray(courses));
 	}
 	
+	@GET
+	@Path("/teacher/{teacher_id}/list/years")
+	@Produces(MediaType.APPLICATION_JSON)
+	public String[] getYears(@PathParam("teacher_id") String teacher_id) {
+		String query = "select year from Course C where teacher_id='" + teacher_id + "'";
+		if(teacher_id.equals("-1")) {
+			query = "select year from Course C";
+		}
+		Session s = getSession();
+		Transaction t = s.beginTransaction();
+		List<String> list = (List<String>)(s.createQuery(query).list());
+		t.commit();
+		String[] years = new String[list.size()];
+		return (String[])(list.toArray(years));
+	}
+	
+	@GET
+	@Path("/teacher/{teacher_id}/list/by/year/{year}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Course[] getCoursesByYear(@PathParam("teacher_id") String teacher_id, @PathParam("year") String year) {
+		String query = "from Course C where C.year='" + year + "' teacher_id='" + teacher_id + "'";
+		if(teacher_id.equals("-1")) {
+			query = "from Course C";
+		}
+		Session s = getSession();
+		Transaction t = s.beginTransaction();
+		List<Course> list = (List<Course>)(s.createQuery(query).list());
+		t.commit();
+		Course[] courses = new Course[list.size()];
+		return (Course[])(list.toArray(courses));
+	}
+	
 	@POST
 	@Path("/teacher/{teacher_id}/create")
 	public String createCourse(
@@ -143,7 +175,8 @@ public class CourseApi extends BaseApi {
 			@FormParam(value="start") String start,
 			@FormParam(value="end") String end,
 			@FormParam(value="created_time") String created_time,
-			@FormParam(value="content") String content
+			@FormParam(value="content") String content,
+			@FormParam(value="desc") String desc
 		) throws UnsupportedEncodingException {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
@@ -155,6 +188,7 @@ public class CourseApi extends BaseApi {
 		mission.setName(name);
 		mission.setCreated_time(created_time);
 		mission.setContent(content);
+		mission.setDescription(desc);
 		session.save(mission);
 		String nestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" +  course_id + "')";
 		String query = "select user from PadGroupUser PGU where PGU.padGroupId in " + nestedQuery;

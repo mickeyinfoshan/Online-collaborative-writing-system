@@ -17,6 +17,7 @@ public class Mission {
 	private String start;
 	private String end;
 	private String content;
+	private String description;
 	
 	@Id
 	@GeneratedValue
@@ -67,5 +68,13 @@ public class Mission {
 	public void setContent(String content) {
 		this.content = content;
 	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
 	
 }
