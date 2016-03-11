@@ -73,6 +73,14 @@ define(function (require, exports, module) {
             this.getJSON(seajs.padDomainApi + "getLastVersionsByUser", {apikey: seajs.apikey, "padID": padID, "author": author}, callback);
 
         },
+        appendFocusMessage: function (padID, authorID, userName, curTime, focus, callback) {
+            console.log('this is appendFocus');
+            this.getJSON(seajs.padDomainApi + "appendFocusMessage", {apikey: seajs.apikey, "padID": padID, "authorID": authorID, "name": userName, "time": curTime, "focus": focus}, callback);
+        },
+        getAllFocus: function (padID, callback) {
+            console.log('this is getAllFocus');
+            this.getJSON(seajs.padDomainApi + "getAllFocus", {apikey: seajs.apikey, "padID": padID}, callback);
+        },
         getReadOnlyID: function (padID, callback) {
             this.getJSON(seajs.padDomainApi + "getReadOnlyID", {apikey: seajs.apikey, "padID": padID}, callback);
 
