@@ -86,7 +86,7 @@ public class CourseApi extends BaseApi {
 	public Course[] getCoursesByYear(@PathParam("teacher_id") String teacher_id, @PathParam("year") String year) {
 		String query = "from Course C where C.year='" + year + "' teacher_id='" + teacher_id + "'";
 		if(teacher_id.equals("-1")) {
-			query = "from Course C";
+			query = "from Course C where C.year='" + year + "'";
 		}
 		Session s = getSession();
 		Transaction t = s.beginTransaction();

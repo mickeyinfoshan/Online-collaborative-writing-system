@@ -66,7 +66,7 @@ public class MailThread extends Thread {
 		String endString = df.format(end);
 		text = text + "时间：" + startString + "  -  " + endString + "\n";
 		text = text + "作业简介：" + mission.getDescription() + "\n";
-		text = text + "直达链接：http://121.40.97.89:8080/pad\n";
+		text = text + "直达链接：http://222.198.126.241/pad/\n";
 		text += "（该邮件由系统自动发出，请勿回复）";
 		return text;
 	}

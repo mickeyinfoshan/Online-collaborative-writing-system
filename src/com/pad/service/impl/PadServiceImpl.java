@@ -72,7 +72,7 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 				padDao.deletePad(cd.getTime());
 			}
 			// 获取数据库中所有数据
-			
+			pads = padDao.findByHQL("from Pad P where P.gid in " + groupIdsString);
 			// 没有数据直接返回
 			if (pads == null) {
 				return null;
