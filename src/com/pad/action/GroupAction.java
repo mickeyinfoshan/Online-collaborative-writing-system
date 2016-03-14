@@ -191,111 +191,111 @@ public class GroupAction extends ActionSupport implements SessionAware,
 	}
 
 	public void getUsers() {
-		System.out.print("getUserByGroupId\n");
-		try {
-			response.setCharacterEncoding("UTF-8");
-			if (group.getGroupId() != null) {
-				JSONArray users = groupService.getById(group.getGroupId())
-						.usersJson();
-				jo.put("message", "ok");
-				jo.put("code", 0);
-				jo.element("users", users);
-				String json = jo.toString();
-				System.out.println("------getUsersByGroupId--------" + json);
-				response.getWriter().write(json);
-			} else {
-				jo.put("status", false);
-				String json = jo.toString();
-				response.getWriter().write(json);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		System.out.print("getUserByGroupId\n");
+//		try {
+//			response.setCharacterEncoding("UTF-8");
+//			if (group.getGroupId() != null) {
+//				JSONArray users = groupService.getById(group.getGroupId())
+//						.usersJson();
+//				jo.put("message", "ok");
+//				jo.put("code", 0);
+//				jo.element("users", users);
+//				String json = jo.toString();
+//				System.out.println("------getUsersByGroupId--------" + json);
+//				response.getWriter().write(json);
+//			} else {
+//				jo.put("status", false);
+//				String json = jo.toString();
+//				response.getWriter().write(json);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public void createGroup() {
-		System.out.println("正在创建组" + groupName);
-		try {
-			response.setCharacterEncoding("UTF-8");
-
-			User user = (User) session.get("user");
-			user = userService.getById(user.getAuthorId());
-			if (user != null) {
-				Set<Group> groups = user.getGroups();
-				for (Group g : groups) {
-					if (g.getName().equals(groupName)) {
-						jo.put("status", 2);
-						jo.put("message", "repeat");
-						jo.put("code", 2);
-						jo.put("groupId", g.getGroupId());
-						String json = jo.toString();
-						response.getWriter().write(json);
-						return;
-					}
-				}
-				Group group = new Group();
-				group.setName(groupName);
-				group.setStatus(this.groupStatus);
-				Set<User> users = group.getUsers();
-				users.add(user);
-				group.setUsers(users);
-				group.setCreateUser(user);
-				String groupId = groupService.save(group);
-				jo.put("status", 0);
-				jo.put("message", "ok");
-				jo.put("code", 0);
-				jo.put("groupId", groupId);
-				String json = jo.toString();
-				response.getWriter().write(json);
-			} else {
-				jo.put("status", 1);
-				jo.put("message", "error");
-				jo.put("code", 1);
-				String json = jo.toString();
-				response.getWriter().write(json);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		System.out.println("正在创建组" + groupName);
+//		try {
+//			response.setCharacterEncoding("UTF-8");
+//
+//			User user = (User) session.get("user");
+//			user = userService.getById(user.getAuthorId());
+//			if (user != null) {
+//				Set<Group> groups = user.getGroups();
+//				for (Group g : groups) {
+//					if (g.getName().equals(groupName)) {
+//						jo.put("status", 2);
+//						jo.put("message", "repeat");
+//						jo.put("code", 2);
+//						jo.put("groupId", g.getGroupId());
+//						String json = jo.toString();
+//						response.getWriter().write(json);
+//						return;
+//					}
+//				}
+//				Group group = new Group();
+//				group.setName(groupName);
+//				group.setStatus(this.groupStatus);
+//				Set<User> users = group.getUsers();
+//				users.add(user);
+//				group.setUsers(users);
+//				group.setCreateUser(user);
+//				String groupId = groupService.save(group);
+//				jo.put("status", 0);
+//				jo.put("message", "ok");
+//				jo.put("code", 0);
+//				jo.put("groupId", groupId);
+//				String json = jo.toString();
+//				response.getWriter().write(json);
+//			} else {
+//				jo.put("status", 1);
+//				jo.put("message", "error");
+//				jo.put("code", 1);
+//				String json = jo.toString();
+//				response.getWriter().write(json);
+//			}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	public void getGroups() {
-		try {
-			response.setCharacterEncoding("UTF-8");
-			User user = (User) session.get("user");
-			JSONArray ja;
-			if (user.getAuthority() == 1) {
-				List<Group> gs = groupService.getByHQL("from Group order by groupId");
-
-				JsonConfig cfg = new JsonConfig();
-				cfg.setJsonPropertyFilter(new PropertyFilter() {
-					public boolean apply(Object source, String name,
-							Object value) {
-						if (name.equals("users") || name.equals("createUser")) {
-							return true;
-						} else {
-							return false;
-						}
-					}
-				});
-				cfg.setExcludes(new String[] { "handler",
-						"hibernateLazyInitializer" });
-				ja = JSONArray.fromObject(gs.toArray(), cfg);
-
-			} else {
-				user = userService.getById(user.getAuthorId());
-				ja = user.groupsJson();
-			}
-
-			jo.put("status", true);
-			jo.put("message", "ok");
-			jo.put("code", 0);
-			jo.element("rows", ja);
-			String json = jo.toString();
-			response.getWriter().write(json);
-		} catch (Exception e) {
-
-		}
+//		try {
+//			response.setCharacterEncoding("UTF-8");
+//			User user = (User) session.get("user");
+//			JSONArray ja;
+//			if (user.getAuthority() == 1) {
+//				List<Group> gs = groupService.getByHQL("from Group order by groupId");
+//
+//				JsonConfig cfg = new JsonConfig();
+//				cfg.setJsonPropertyFilter(new PropertyFilter() {
+//					public boolean apply(Object source, String name,
+//							Object value) {
+//						if (name.equals("users") || name.equals("createUser")) {
+//							return true;
+//						} else {
+//							return false;
+//						}
+//					}
+//				});
+//				cfg.setExcludes(new String[] { "handler",
+//						"hibernateLazyInitializer" });
+//				ja = JSONArray.fromObject(gs.toArray(), cfg);
+//
+//			} else {
+//				user = userService.getById(user.getAuthorId());
+//				ja = user.groupsJson();
+//			}
+//
+//			jo.put("status", true);
+//			jo.put("message", "ok");
+//			jo.put("code", 0);
+//			jo.element("rows", ja);
+//			String json = jo.toString();
+//			response.getWriter().write(json);
+//		} catch (Exception e) {
+//
+//		}
 	}
 
 	public UserService getUserService() {

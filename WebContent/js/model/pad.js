@@ -29,9 +29,13 @@ define(function (require, exports, module) {
         createSession: function (groupID, authorID, validUntil, callback) {
             if (validUntil instanceof Function) {
                 callback = validUntil;
-                validUntil = new Date().getTime() / 1000 + 2 * 60 * 60;
+                 validUntil = new Date().getTime() / 1000 + 24 * 60 * 60;
+                
             }
-            this.getJSON(seajs.padDomainApi + "createSession", {apikey: seajs.apikey, groupID: groupID, authorID: authorID, validUntil: validUntil}, callback)
+        
+                this.getJSON(seajs.padDomainApi + "createSession", {apikey: seajs.apikey, groupID: groupID, authorID: authorID, validUntil: validUntil}, callback)
+            
+            
         },
         listPads: function (groupID, callback) {
             this.getJSON(seajs.padDomainApi + "listPads", {apikey: seajs.apikey, groupID: groupID}, callback);

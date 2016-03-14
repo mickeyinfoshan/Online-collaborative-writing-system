@@ -45,12 +45,8 @@ import com.pad.entity.MissionPad;
 import com.pad.entity.User;
 import com.pad.util.PadServerApi;
 
-@Component
 @Path("/mission")
 public class MissionApi extends BaseApi{
-	
-	@Autowired
-	private SessionFactory mysf;
 	
 	@GET
 	@Path("/{mission_id}/pad/add/{pad_id}")
@@ -136,9 +132,7 @@ public class MissionApi extends BaseApi{
 		JSONObject result = new JSONObject();
 		result.put("pad_id", padId);
 		result.put("group_id", padGroupId);
-		Session _session = mysf.openSession();
-		User user = (User)_session.get(User.class, user_id);
-		_session.close();
+		User user = (User)session.get(User.class, user_id);
 		String padUserUrl = PadServerApi.getBaseRequestUrl("createAuthorIfNotExistsFor");
 		padUserUrl += "&authorMapper=" + user_id;
 		padUserUrl += "&name=" + URLEncoder.encode(user.getName(), "UTF-8");
@@ -201,14 +195,6 @@ public class MissionApi extends BaseApi{
 		response.header("Content-Disposition",
 				"attachment; filename=" + pdfFileName);
 		return response.build();
-	}
-	
-	public SessionFactory getMysf() {
-		return mysf;
-	}
-
-	public void setMysf(SessionFactory mysf) {
-		this.mysf = mysf;
 	}
 	
 	

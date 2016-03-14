@@ -17,8 +17,8 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.pad.dao.impl.UserDaoImpl;
 
-@Component
 @Path("/analyze")
 public class AnalyzeApi extends BaseApi{
 

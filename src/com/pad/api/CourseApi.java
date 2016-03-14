@@ -26,6 +26,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -41,12 +42,8 @@ import com.pad.entity.User;
 import com.pad.util.MailThread;
 import com.pad.util.PadServerApi;
 
-@Component
 @Path("/course")
 public class CourseApi extends BaseApi {
-	
-	@Autowired
-	private SessionFactory mysf;
 	
 	@GET
 	@Path("/teacher/{teacher_id}/list")
@@ -210,11 +207,11 @@ public class CourseApi extends BaseApi {
 			session.save(mp);
 		}
 		t.commit();
-		MailThread mt = new MailThread();
-		mt.setMission(mission);
-		mt.setSessionFactory(mysf);
-		mt.setReceivers(receivers);
-		mt.start();
+//		MailThread mt = new MailThread();
+//		mt.setMission(mission);
+//		mt.setSessionFactory(mysf);
+//		mt.setReceivers(receivers);
+//		mt.start();
 		return "200";
 	}
 	
@@ -258,6 +255,7 @@ public class CourseApi extends BaseApi {
 	@GET
 	@Path("/student/{student_id}/selected")
 	@Produces(MediaType.APPLICATION_JSON)
+	@Transactional
 	public Course[] getStudentSelectedCourses(@PathParam("student_id") String student_id) {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
@@ -310,7 +308,6 @@ public class CourseApi extends BaseApi {
 		int EMAIL_COL = 3;
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
-		Session _session = mysf.openSession();
 		Course course = (Course)session.get(Course.class, course_id);
 		XSSFWorkbook wb = new XSSFWorkbook(fileInputStream);
 		XSSFSheet sheet = wb.getSheetAt(0);
@@ -345,7 +342,7 @@ public class CourseApi extends BaseApi {
 				if(name.isEmpty() || studentNumber.isEmpty() || email.isEmpty()) {
 					continue;
 				}
-				Query getExistUserQuery = _session.createQuery(
+				Query getExistUserQuery = session.createQuery(
 						"from User where username=:name ");
 				getExistUserQuery.setString("name", email);
 				User user = (User)getExistUserQuery.uniqueResult();
@@ -356,8 +353,8 @@ public class CourseApi extends BaseApi {
 					user.setUsername(email);
 					user.setPassword(studentNumber);
 					user.setStudentNumber(studentNumber);
-					Transaction _t = _session.beginTransaction();
-					_session.save(user);
+					Transaction _t = session.beginTransaction();
+					session.save(user);
 					_t.commit();
 					user.initPadUser();
 				}
@@ -369,7 +366,7 @@ public class CourseApi extends BaseApi {
 			i += groupMemberCount;
 		}
 		t.commit();
-		_session.close();
+//		_session.close();
 		return "200";
 	}
 	
@@ -386,22 +383,22 @@ public class CourseApi extends BaseApi {
 		String getUsersQuery = "select user from PadGroupUser PGU where PGU.padGroupId='" + padGroupId + "'";
 		List<String> userIdList = (List<String>)session.createQuery(getUsersQuery).list();
 		JSONArray result = new JSONArray();
-		Session _session = mysf.openSession();
+//		Session _session = mysf.openSession();
 		for(int i = 0; i < userIdList.size(); i++) {
 			String userId = userIdList.get(i);
-			User u = (User)_session.get(User.class, userId);
+			User u = (User)session.get(User.class, userId);
 			result.add(u);
 		}
-		_session.close();
+//		_session.close();
 		t.commit();
 		return result.toJSONString();
 	}
 	
-	public SessionFactory getMysf() {
-		return mysf;
-	}
-
-	public void setMysf(SessionFactory mysf) {
-		this.mysf = mysf;
-	}
+//	public SessionFactory getMysf() {
+//		return mysf;
+//	}
+//
+//	public void setMysf(SessionFactory mysf) {
+//		this.mysf = mysf;
+//	}
 }

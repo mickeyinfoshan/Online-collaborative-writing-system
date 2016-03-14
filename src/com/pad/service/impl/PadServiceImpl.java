@@ -9,37 +9,27 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.pad.dao.PadDao;
+import com.pad.dao.impl.PadDaoImpl;
 import com.pad.entity.Pad;
 import com.pad.service.PadService;
 import com.pad.util.StaticData;
 
 public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
-	private PadDao padDao;
-
-	@Autowired
-	protected SessionFactory sessionFactory;
+	private PadDaoImpl padDao;
 	
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-	
-	public PadDao getPadDao() {
+	public PadDaoImpl getPadDao() {
 		return padDao;
 	}
 
 	public void setPadDao(PadDao padDao) {
 		setBaseDaoImpl(padDao);
-		this.padDao = padDao;
+		this.padDao = (PadDaoImpl) padDao;
 	}
 
 	@Override
 	public List<Pad> updatePadAndGroup(Pad pad) {
 		// TODO Auto-generated method stub
-		Session session = getSessionFactory().openSession();
+		Session session = this.getPadDao().getSession();
 		String getCourseQuery = "(select course from CoursePadGroup CPG where CPG.padGroupId='" + pad.getGid() + "')";
 		String getGroupsQuery = "select padGroupId from CoursePadGroup _CPG where _CPG.course in " + getCourseQuery;
 		System.out.println(getGroupsQuery);
@@ -50,7 +40,7 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 		groupIdsString = groupIdsString.replace(']', ')');
 		groupIdsString = groupIdsString.replace('\"', '\'');
 		System.out.println(groupIdsString);
-		session.close();
+//		session.close();
 		List<Pad> pads = padDao.findByHQL("from Pad P where P.gid in " + groupIdsString);
 		if (StaticData.needUpdate()) {// 需要更新
 			Date cd = new Date();

@@ -7,6 +7,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pad.dao.BaseDao;
 
@@ -15,38 +16,16 @@ import com.pad.dao.BaseDao;
  * 
  */
 @SuppressWarnings("unchecked")
-public class BaseDaoImpl<T> implements BaseDao<T> {
+@Transactional
+public class BaseDaoImpl<T> extends BaseSessionFactoryDaoImpl implements BaseDao<T> {
 
 	private Class<T> clazz;
-
-	/**
-	 * 通过构造方法指定DAO的具体实现类
-	 */
+	
 	public BaseDaoImpl() {
 		ParameterizedType type = (ParameterizedType) this.getClass()
 				.getGenericSuperclass();
 		clazz = (Class<T>) type.getActualTypeArguments()[0];
 		System.out.println("DAO的真实实现类是：" + this.clazz.getName());
-	}
-
-	/**
-	 * 向DAO层注入SessionFactory
-	 */
-	protected SessionFactory sessionFactory;
-
-	/**
-	 * 获取当前工作的Session
-	 */
-	protected Session getSession() {
-		return this.sessionFactory.getCurrentSession();
-	}
-
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
 	}
 
 	public String save(T entity) {
