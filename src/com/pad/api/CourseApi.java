@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -42,6 +43,7 @@ import com.pad.entity.User;
 import com.pad.util.MailThread;
 import com.pad.util.PadServerApi;
 
+@Component
 @Path("/course")
 public class CourseApi extends BaseApi {
 	
@@ -81,9 +83,9 @@ public class CourseApi extends BaseApi {
 	@Path("/teacher/{teacher_id}/list/by/year/{year}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Course[] getCoursesByYear(@PathParam("teacher_id") String teacher_id, @PathParam("year") String year) {
-		String query = "from Course C where C.year='" + year + "' teacher_id='" + teacher_id + "'";
+		String query = "from Course C where C.year='" + year + "' and C.teacher_id='" + teacher_id + "'";
 		if(teacher_id.equals("-1")) {
-			query = "from Course C";
+			query = "from Course C where C.year='" + year + "'";
 		}
 		Session s = getSession();
 		Transaction t = s.beginTransaction();
@@ -207,11 +209,11 @@ public class CourseApi extends BaseApi {
 			session.save(mp);
 		}
 		t.commit();
-//		MailThread mt = new MailThread();
-//		mt.setMission(mission);
-//		mt.setSessionFactory(mysf);
-//		mt.setReceivers(receivers);
-//		mt.start();
+		MailThread mt = new MailThread();
+		mt.setMission(mission);
+		mt.setSessionFactory(this.getSessionFactory());
+		mt.setReceivers(receivers);
+		mt.start();
 		return "200";
 	}
 	
@@ -312,8 +314,23 @@ public class CourseApi extends BaseApi {
 		XSSFWorkbook wb = new XSSFWorkbook(fileInputStream);
 		XSSFSheet sheet = wb.getSheetAt(0);
 		int lastRowIndex = sheet.getLastRowNum();
-		int i = START_ROW;
 		DataFormatter df = new DataFormatter();
+		List<String> existEmail = new ArrayList<String>();
+		int checkRowIndex = START_ROW;
+		for(checkRowIndex = START_ROW; checkRowIndex < lastRowIndex; checkRowIndex++) {
+			Row _row = sheet.getRow(checkRowIndex);
+			String groupNumber = df.formatCellValue(_row.getCell(GROUP_COL));
+			if(groupNumber.isEmpty()) {
+				break;
+			}
+			String email = df.formatCellValue(_row.getCell(EMAIL_COL));
+			if(existEmail.indexOf(email) >= 0) {
+				return "500";
+			}
+			existEmail.add(email);
+		}
+		int i = START_ROW;
+		
 		while(i <= lastRowIndex) {
 			String groupNumber = df.formatCellValue(sheet.getRow(i).getCell(GROUP_COL));
 			if(groupNumber.isEmpty()) {
@@ -353,9 +370,9 @@ public class CourseApi extends BaseApi {
 					user.setUsername(email);
 					user.setPassword(studentNumber);
 					user.setStudentNumber(studentNumber);
-					Transaction _t = session.beginTransaction();
+//					Transaction _t = session.beginTransaction();
 					session.save(user);
-					_t.commit();
+//					_t.commit();
 					user.initPadUser();
 				}
 				PadGroupUser padGroupUser = new PadGroupUser();
@@ -379,7 +396,7 @@ public class CourseApi extends BaseApi {
 		Course course = (Course)session.get(Course.class, course_id);
 		String getPadGroupNestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" + course.getId() + "')";
 		String getPadGroupQuery = "select padGroupId from PadGroupUser PGU where PGU.user='" + user_id + "' and PGU.padGroupId in " + getPadGroupNestedQuery;
-		String padGroupId = (String)session.createQuery(getPadGroupQuery).uniqueResult();
+		String padGroupId = (String)session.createQuery(getPadGroupQuery).list().get(0);
 		String getUsersQuery = "select user from PadGroupUser PGU where PGU.padGroupId='" + padGroupId + "'";
 		List<String> userIdList = (List<String>)session.createQuery(getUsersQuery).list();
 		JSONArray result = new JSONArray();

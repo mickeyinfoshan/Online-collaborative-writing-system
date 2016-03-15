@@ -214,9 +214,12 @@ define(function (require, explore, module) {
                     temp = explore.getVersionsByAuthorId(versions, n.id);
                     t += explore.getTimeByVersions(temp);
 //                    w += explore.getTextCountByAuthorId(versions, n.id);
+                    for(var i = 1; i < versions.length; i++) {
+                        w += versions[i]["textCount"];
+                    }
                 }
             });
-            w = versions[versions.length - 1]["sumCount"] - versions[0]["textCount"] || 0;
+            //w = versions[versions.length - 1]["sumCount"] - versions[0]["textCount"] || 0;
             api.updatePadAndGroupValue(
                 {
                     "timeValue": Math.round(t),

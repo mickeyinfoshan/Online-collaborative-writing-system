@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.pad.entity.Comment;
 
+@Component
 @Path("/comment")
 public class CommentApi extends BaseApi{
 	

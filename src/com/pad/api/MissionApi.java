@@ -45,6 +45,7 @@ import com.pad.entity.MissionPad;
 import com.pad.entity.User;
 import com.pad.util.PadServerApi;
 
+@Component
 @Path("/mission")
 public class MissionApi extends BaseApi{
 	
@@ -119,7 +120,7 @@ public class MissionApi extends BaseApi{
 		Course course = mission.getCourse();
 		String getPadGroupNestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" + course.getId() + "')";
 		String getPadGroupQuery = "select padGroupId from PadGroupUser PGU where PGU.user='" + user_id + "' and PGU.padGroupId in " + getPadGroupNestedQuery;
-		String padGroupId = (String)session.createQuery(getPadGroupQuery).uniqueResult();
+		String padGroupId = (String)session.createQuery(getPadGroupQuery).list().get(0);
 		String url = PadServerApi.getBaseRequestUrl("listPads");
 		url += "&groupID=" + padGroupId;
 		String resString = HttpRequest.get(url).body();
@@ -128,7 +129,6 @@ public class MissionApi extends BaseApi{
 		System.out.println(json_padIds.toJSONString());
 		String getPadQuery = "select pad_id from MissionPad MP where MP.mission=" + mission.getId() + "and MP.pad_id in (:padIds)";
 		String padId = (String)session.createQuery(getPadQuery).setParameterList("padIds", json_padIds.toArray()).uniqueResult();
-		t.commit();
 		JSONObject result = new JSONObject();
 		result.put("pad_id", padId);
 		result.put("group_id", padGroupId);
@@ -141,6 +141,7 @@ public class MissionApi extends BaseApi{
 		String authorId = _res.getJSONObject("data").getString("authorID");
 		result.put("author_id", authorId);
 		String response = result.toJSONString();
+		t.commit();
 		return response;
 	}
 

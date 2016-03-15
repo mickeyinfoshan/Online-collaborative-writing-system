@@ -14,6 +14,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.PropertyFilter;
@@ -66,7 +68,8 @@ public class User implements Serializable, Comparable<User> {
 	}
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	public String getAuthorId() {
 		return authorId;
 	}

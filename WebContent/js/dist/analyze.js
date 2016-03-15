@@ -52284,7 +52284,7 @@
 		},
 		exportCSV: function exportCSV() {
 			var data = this.getData();
-			var fields = ["time", "authorsLength", "padTextCount", "chatCount"];
+			var fields = ["time", "authorsLength", "padTextCount", "chatCount", "chatterCount", "messageCount", "maxTimestampGap"];
 			var rows = [];
 			data.forEach(function (dataItem) {
 				var row = [];

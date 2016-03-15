@@ -15,9 +15,9 @@ import com.pad.service.PadService;
 import com.pad.util.StaticData;
 
 public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
-	private PadDaoImpl padDao;
+	private PadDao padDao;
 	
-	public PadDaoImpl getPadDao() {
+	public PadDao getPadDao() {
 		return padDao;
 	}
 
@@ -29,19 +29,11 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 	@Override
 	public List<Pad> updatePadAndGroup(Pad pad) {
 		// TODO Auto-generated method stub
-		Session session = this.getPadDao().getSession();
+//		Session session = this.getPadDao().getSession();
 		String getCourseQuery = "(select course from CoursePadGroup CPG where CPG.padGroupId='" + pad.getGid() + "')";
-		String getGroupsQuery = "select padGroupId from CoursePadGroup _CPG where _CPG.course in " + getCourseQuery;
+		String getGroupsQuery = "(select padGroupId from CoursePadGroup _CPG where _CPG.course in " + getCourseQuery +")";
 		System.out.println(getGroupsQuery);
-		List<String> groupIds = (List<String>)session.createQuery(getGroupsQuery).list();
-//		System.out.println(groupIds.toArray().toString());
-		String groupIdsString = com.alibaba.fastjson.JSON.toJSONString(groupIds.toArray());
-		groupIdsString = groupIdsString.replace('[', '(');
-		groupIdsString = groupIdsString.replace(']', ')');
-		groupIdsString = groupIdsString.replace('\"', '\'');
-		System.out.println(groupIdsString);
-//		session.close();
-		List<Pad> pads = padDao.findByHQL("from Pad P where P.gid in " + groupIdsString);
+		List<Pad> pads = padDao.findByHQL("from Pad P where P.gid in " + getGroupsQuery);
 		if (StaticData.needUpdate()) {// 需要更新
 			Date cd = new Date();
 			pad.setLastUpdate(cd.getTime());
@@ -54,6 +46,7 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 				p.setWordValue(pad.getWordValue());
 				padDao.update(p);
 			} else {
+				System.out.println(com.alibaba.fastjson.JSON.toJSONString(pad));
 				padDao.save(pad);
 			}
 			// 更新数据库中的过期数据
@@ -62,6 +55,7 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 				padDao.deletePad(cd.getTime());
 			}
 			// 获取数据库中所有数据
+			pads = padDao.findByHQL("from Pad P where P.gid in " + getGroupsQuery);
 			
 			// 没有数据直接返回
 			if (pads == null) {
@@ -97,7 +91,7 @@ public class PadServiceImpl extends BaseServiceImpl<Pad> implements PadService {
 
 			StaticData.pads = results;
 			
-			pads = padDao.findByHQL("from Pad P where P.gid in " + groupIdsString);
+			
 			return pads;
 		} else {// 不需要更新
 			return pads;

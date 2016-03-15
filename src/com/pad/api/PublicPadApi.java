@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.pad.entity.PublicPad;
 
+@Component
 @Path("/public/pad")
 public class PublicPadApi extends BaseApi {
 	
