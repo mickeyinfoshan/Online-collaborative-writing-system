@@ -49,9 +49,6 @@ import com.pad.util.PadServerApi;
 @Path("/mission")
 public class MissionApi extends BaseApi{
 	
-	@Autowired
-	private SessionFactory mysf;
-	
 	@GET
 	@Path("/{mission_id}/pad/add/{pad_id}")
 	public String attachPadToMission(
@@ -123,7 +120,7 @@ public class MissionApi extends BaseApi{
 		Course course = mission.getCourse();
 		String getPadGroupNestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" + course.getId() + "')";
 		String getPadGroupQuery = "select padGroupId from PadGroupUser PGU where PGU.user='" + user_id + "' and PGU.padGroupId in " + getPadGroupNestedQuery;
-		String padGroupId = (String)session.createQuery(getPadGroupQuery).uniqueResult();
+		String padGroupId = (String)session.createQuery(getPadGroupQuery).list().get(0);
 		String url = PadServerApi.getBaseRequestUrl("listPads");
 		url += "&groupID=" + padGroupId;
 		String resString = HttpRequest.get(url).body();
@@ -132,13 +129,10 @@ public class MissionApi extends BaseApi{
 		System.out.println(json_padIds.toJSONString());
 		String getPadQuery = "select pad_id from MissionPad MP where MP.mission=" + mission.getId() + "and MP.pad_id in (:padIds)";
 		String padId = (String)session.createQuery(getPadQuery).setParameterList("padIds", json_padIds.toArray()).uniqueResult();
-		t.commit();
 		JSONObject result = new JSONObject();
 		result.put("pad_id", padId);
 		result.put("group_id", padGroupId);
-		Session _session = mysf.openSession();
-		User user = (User)_session.get(User.class, user_id);
-		_session.close();
+		User user = (User)session.get(User.class, user_id);
 		String padUserUrl = PadServerApi.getBaseRequestUrl("createAuthorIfNotExistsFor");
 		padUserUrl += "&authorMapper=" + user_id;
 		padUserUrl += "&name=" + URLEncoder.encode(user.getName(), "UTF-8");
@@ -147,6 +141,7 @@ public class MissionApi extends BaseApi{
 		String authorId = _res.getJSONObject("data").getString("authorID");
 		result.put("author_id", authorId);
 		String response = result.toJSONString();
+		t.commit();
 		return response;
 	}
 
@@ -201,14 +196,6 @@ public class MissionApi extends BaseApi{
 		response.header("Content-Disposition",
 				"attachment; filename=" + pdfFileName);
 		return response.build();
-	}
-	
-	public SessionFactory getMysf() {
-		return mysf;
-	}
-
-	public void setMysf(SessionFactory mysf) {
-		this.mysf = mysf;
 	}
 	
 	

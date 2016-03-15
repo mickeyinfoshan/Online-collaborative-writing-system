@@ -79,6 +79,13 @@ var SelectedCourseBlock = React.createClass({
 				_this.getStudentCount();
 				alert("导入成功");
 			}
+			else {
+				_this.setState({
+					importing : false 
+				});
+				_this.getStudentCount();
+				alert("导入失败");
+			}
 		}).fail(function(){
 			_this.setState({
 				importing : false 

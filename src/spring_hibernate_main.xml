@@ -20,18 +20,14 @@
 
 	<!-- dao -->
 	<bean id="userDaoImpl" class="com.pad.dao.impl.UserDaoImpl" scope="prototype">
-		<property name="sessionFactory" ref="mysf"></property>
+		
 	</bean>
 	<bean id="groupDaoImpl" class="com.pad.dao.impl.GroupDaoImpl"
 		scope="prototype">
-		<property name="sessionFactory" ref="mysf"></property>
+		
 	</bean>
 	<bean id="padDaoImpl" class="com.pad.dao.impl.PadDaoImpl" scope="prototype">
-		<property name="sessionFactory" ref="mysf"></property>
-	</bean>
-	
-	<bean id="myApi" class="com.pad.api.MyApi" scope="prototype">
-		<property name="sessionFactory" ref="mysf"></property>
+		
 	</bean>
 	
 	<!-- service -->
@@ -69,5 +65,6 @@
 		<property name="padService" ref="padServiceImpl" />
 		<property name="pad" ref="pad"></property>
 	</bean>
-
+	
+	<bean id="courseApi" class="com.pad.api.CourseApi" scope="prototype"></bean>
 </beans>

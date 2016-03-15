@@ -8,6 +8,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.PropertyFilter;
@@ -16,6 +24,9 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.pad.util.DateUtil;
 import com.pad.util.PadServerApi;
 
+@Entity
+@XmlRootElement
+@Table(name="t_user")
 public class User implements Serializable, Comparable<User> {
 	/**
 	 * 
@@ -29,19 +40,20 @@ public class User implements Serializable, Comparable<User> {
 	private String registtime;// yyyy-MM-dd-HH-mm-ss
 	private String studentNumber;
 	private int authority = 10;
-	private Set<Group> groups = new HashSet<Group>();
+	//private Set<Group> groups = new HashSet<Group>();
 
 	public String toString() {
 		return "user:" + this.name + ":" + this.username + ":" + this.password;
 	}
-
-	public Set<Group> getGroups() {
-		return groups;
-	}
-
-	public void setGroups(Set<Group> groups) {
-		this.groups = groups;
-	}
+	
+	
+//	public Set<Group> getGroups() {
+//		return groups;
+//	}
+//
+//	public void setGroups(Set<Group> groups) {
+//		this.groups = groups;
+//	}
 
 	public User() {
 		this.registtime = DateUtil.dateToString(new Date());
@@ -55,6 +67,9 @@ public class User implements Serializable, Comparable<User> {
 		this.name = name;
 	}
 
+	@Id
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	public String getAuthorId() {
 		return authorId;
 	}
@@ -95,23 +110,23 @@ public class User implements Serializable, Comparable<User> {
 		this.authority = authority;
 	}
 
-	public JSONArray groupsJson() {
-		List<Group> gs = new ArrayList<Group>(groups);
-		Collections.sort(gs);
-		JsonConfig cfg = new JsonConfig();
-		cfg.setJsonPropertyFilter(new PropertyFilter() {
-			public boolean apply(Object source, String name, Object value) {
-				if (name.equals("users") || name.equals("createUser")) {
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
-		cfg.setExcludes(new String[] { "handler", "hibernateLazyInitializer" });
-		JSONArray ja = JSONArray.fromObject(gs.toArray(), cfg);
-		return ja;
-	}
+//	public JSONArray groupsJson() {
+//		List<Group> gs = new ArrayList<Group>(groups);
+//		Collections.sort(gs);
+//		JsonConfig cfg = new JsonConfig();
+//		cfg.setJsonPropertyFilter(new PropertyFilter() {
+//			public boolean apply(Object source, String name, Object value) {
+//				if (name.equals("users") || name.equals("createUser")) {
+//					return true;
+//				} else {
+//					return false;
+//				}
+//			}
+//		});
+//		cfg.setExcludes(new String[] { "handler", "hibernateLazyInitializer" });
+//		JSONArray ja = JSONArray.fromObject(gs.toArray(), cfg);
+//		return ja;
+//	}
 
 	@Override
 	public int compareTo(User o) {

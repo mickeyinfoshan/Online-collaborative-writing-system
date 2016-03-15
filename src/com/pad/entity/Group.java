@@ -8,12 +8,21 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
 import net.sf.json.util.PropertyFilter;
 
 import com.pad.util.DateUtil;
 
+@Entity
+@XmlRootElement
+@Table(name="t_group")
 public class Group implements Serializable, Comparable<Group> {
 	/**
 	 * 
@@ -93,6 +102,8 @@ public class Group implements Serializable, Comparable<Group> {
 		this.name = name;
 	}
 
+	@Id
+	@GeneratedValue
 	public String getGroupId() {
 		return groupId;
 	}

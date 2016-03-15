@@ -60,6 +60,7 @@ var CommentInput = React.createClass({
 				_this.setState({
 					content : ""
 				});
+				_this.props.requestComments();
 			}
 		}).error(function() {
 			window.alert("服务器去开小差了，请稍后重试");

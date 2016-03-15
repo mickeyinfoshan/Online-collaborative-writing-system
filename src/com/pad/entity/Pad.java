@@ -1,6 +1,18 @@
 package com.pad.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity
+@XmlRootElement
+@Table(name="t_pad")
 public class Pad {
+	private String id;
 	private String gid;
 	private String gname;
 	private String pid;
@@ -72,6 +84,16 @@ public class Pad {
 
 	public void setWordValue(int wordValue) {
 		this.wordValue = wordValue;
+	}
+
+	@Id
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

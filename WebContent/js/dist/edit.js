@@ -59084,12 +59084,15 @@
 	var CommentBlock = React.createClass({
 		displayName: "CommentBlock",
 
+		requestComments: function requestComments() {
+			this.refs.commentList.getComments();
+		},
 		render: function render() {
 			return React.createElement(
 				"div",
 				null,
-				React.createElement(CommentList, null),
-				React.createElement(CommentInput, null)
+				React.createElement(CommentList, { ref: "commentList" }),
+				React.createElement(CommentInput, { requestComments: this.requestComments })
 			);
 		}
 	});
@@ -59171,6 +59174,7 @@
 					_this.setState({
 						content: ""
 					});
+					_this.props.requestComments();
 				}
 			}).error(function () {
 				window.alert("服务器去开小差了，请稍后重试");
@@ -59248,11 +59252,10 @@
 
 		getComments: function getComments() {
 			var _this = this;
-
 			function _getComments() {
 				setTimeout(function () {
 					_this.getComments();
-				}, 6000);
+				}, 180000);
 			}
 
 			if (!window.GLOBAL) {
@@ -59269,10 +59272,10 @@
 
 			var url = '/pad/api/comment/' + pad_id + '/list';
 			$.get(url, function (res) {
-				_getComments();
 				_this.setState({
 					comments: res
 				});
+				_getComments();
 			});
 		},
 

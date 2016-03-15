@@ -7,6 +7,8 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pad.dao.BaseDao;
 
@@ -15,13 +17,11 @@ import com.pad.dao.BaseDao;
  * 
  */
 @SuppressWarnings("unchecked")
-public class BaseDaoImpl<T> implements BaseDao<T> {
+@Transactional
+public class BaseDaoImpl<T> extends BaseSessionFactoryDaoImpl implements BaseDao<T> {
 
 	private Class<T> clazz;
-
-	/**
-	 * 通过构造方法指定DAO的具体实现类
-	 */
+	
 	public BaseDaoImpl() {
 		ParameterizedType type = (ParameterizedType) this.getClass()
 				.getGenericSuperclass();
@@ -29,58 +29,54 @@ public class BaseDaoImpl<T> implements BaseDao<T> {
 		System.out.println("DAO的真实实现类是：" + this.clazz.getName());
 	}
 
-	/**
-	 * 向DAO层注入SessionFactory
-	 */
-	protected SessionFactory sessionFactory;
-
-	/**
-	 * 获取当前工作的Session
-	 */
-	protected Session getSession() {
-		return this.sessionFactory.getCurrentSession();
-	}
-
-	public SessionFactory getSessionFactory() {
-		return sessionFactory;
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
 	public String save(T entity) {
-
-		return (String) this.getSession().save(entity);
+		Transaction t = this.getSession().beginTransaction();
+		String result = (String) this.getSession().save(entity);
+		t.commit();
+		return result;
 	}
 
 	public void update(T entity) {
+		Transaction t = this.getSession().beginTransaction();
 		this.getSession().merge(entity);
+		t.commit();
 	}
 
 	public void delete(Serializable id) {
+		Transaction t = this.getSession().beginTransaction();
 		this.getSession().delete(this.findById(id));
+		t.commit();
 	}
 
 	public void delete(T entity) {
+		Transaction t = this.getSession().beginTransaction();
 		this.getSession().delete(entity);
+		t.commit();
 	}
 
 	public T findById(Serializable id) {
-		return (T) this.getSession().get(this.clazz, id);
+		Transaction t = this.getSession().beginTransaction();
+		T result = (T) this.getSession().get(this.clazz, id);
+		t.commit();
+		return result;
 	}
 
 	public List<T> findByHQL(String hql, Object... params) {
+		Transaction t = this.getSession().beginTransaction();
 		Query query = this.getSession().createQuery(hql);
 		for (int i = 0; params != null && i < params.length; i++) {
 			query.setParameter(i, params);
 		}
-		return query.list();
+		List<T> result = query.list();
+		t.commit();
+		return result;
 	}
 
 	public void merge(T entity) {
 		// TODO Auto-generated method stub
+		Transaction t = this.getSession().beginTransaction();
 		sessionFactory.getCurrentSession().clear();
 		sessionFactory.getCurrentSession().update(entity);
+		t.commit();
 	}
 }

@@ -29,7 +29,6 @@ public class UserAction extends ActionSupport implements SessionAware,
 	private Map<String, Object> session;
 	private HttpServletResponse response;
 	private JSONObject jo = new JSONObject();
-
 	private User user;
 	private String sessionId;
 
@@ -150,7 +149,7 @@ public class UserAction extends ActionSupport implements SessionAware,
 				cfg.setExcludes(new String[] { "handler",
 						"hibernateLazyInitializer" });
 				jo.element("user", user, cfg);
-				jo.element("groups", user.groupsJson());
+				//jo.element("groups", user.groupsJson());
 				String json = jo.toString();
 				System.out.print(json);
 				response.getWriter().write(json);

@@ -20,11 +20,10 @@ const CommentList = React.createClass({
 
 	getComments : function() {
 		var _this = this;
-		
 		function _getComments() {
 			setTimeout(function() {
 				_this.getComments();
-			}, 6000);
+			}, 180000);
 		}
 
 		if(!window.GLOBAL) {
@@ -41,10 +40,10 @@ const CommentList = React.createClass({
 
 		var url = `/pad/api/comment/${pad_id}/list`;
 		$.get(url, function(res) {
-			_getComments();
 			_this.setState({
 				comments : res 
-			});			
+			});	
+			_getComments();	
 		});
 	},
 

@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.pad.entity.Course;
 import com.pad.entity.Mission;
@@ -66,7 +68,7 @@ public class MailThread extends Thread {
 		String endString = df.format(end);
 		text = text + "时间：" + startString + "  -  " + endString + "\n";
 		text = text + "作业简介：" + mission.getDescription() + "\n";
-		text = text + "直达链接：http://222.198.126.241/pad/\n";
+		text = text + "直达链接：http://222.198.126.241/pad\n";
 		text += "（该邮件由系统自动发出，请勿回复）";
 		return text;
 	}
@@ -96,15 +98,17 @@ public class MailThread extends Thread {
 	}	
 	
 	//用 in 查询可以优化 谁有空谁做吧
+	@Transactional
 	public void run(){
-		Session session = sessionFactory.openSession();
+		Session session = sessionFactory.getCurrentSession();
+		Transaction t = session.beginTransaction();
 		for(int i = 0; i < receivers.size(); i++) {
     	   String user_id = receivers.get(i);
     	   User user = (User)session.get(User.class, user_id);
     	   String email = user.getUsername();
     	   this.sendEmailTo(email);
 		}
-		session.close();
+		t.commit();
     }
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
