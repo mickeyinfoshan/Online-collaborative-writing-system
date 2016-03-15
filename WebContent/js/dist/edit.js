@@ -59275,7 +59275,7 @@
 				_this.setState({
 					comments: res
 				});
-				_getComments();
+				//_getComments();	
 			});
 		},
 

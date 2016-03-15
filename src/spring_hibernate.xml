@@ -13,12 +13,34 @@
     http://www.springframework.org/schema/aop 
     http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-	<bean id="myds" class="org.apache.commons.dbcp.BasicDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url"
+	<bean id="myds" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver" />
+		<property name="jdbcUrl"
 			value="jdbc:mysql://localhost:3306/pad_for_real_data?characterEncoding=UTF-8" />
-		<property name="username" value="root" />
+		<property name="user" value="root" />
 		<property name="password" value="123456" />
+		 <!--连接池中保留的最大连接数。默认值: 15 -->   
+          <property name="maxPoolSize" value="20"/>  
+          <!-- 连接池中保留的最小连接数，默认为：3-->  
+          <property name="minPoolSize" value="2"/>  
+          <!-- 初始化连接池中的连接数，取值应在minPoolSize与maxPoolSize之间，默认为3-->  
+          <property name="initialPoolSize" value="5"/>  
+  
+          <!--最大空闲时间，60秒内未使用则连接被丢弃。若为0则永不丢弃。默认值: 0 -->   
+          <property name="maxIdleTime" value="60"></property>  
+            
+          <!-- 当连接池连接耗尽时，客户端调用getConnection()后等待获取新连接的时间，超时后将抛出SQLException，如设为0则无限期等待。单位毫秒。默认: 0 -->   
+          <property name="checkoutTimeout" value="3000"/>  
+            
+          <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 -->   
+          <property name="acquireIncrement" value="3"/>  
+  
+         <!--定义在从数据库获取新连接失败后重复尝试的次数。默认值: 30 ；小于等于0表示无限次-->   
+          <property name="acquireRetryAttempts" value="30"/>  
+  
+          <!--重新尝试的时间间隔，默认为：1000毫秒-->   
+          <property name="acquireRetryDelay" value="1000" />  
+
 	</bean>
 	<!-- <bean id="mysf"
 		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">

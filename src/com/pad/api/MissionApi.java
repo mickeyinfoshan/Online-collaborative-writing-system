@@ -127,7 +127,7 @@ public class MissionApi extends BaseApi{
 		System.out.println(resString);
 		JSONArray json_padIds = JSON.parseObject(resString).getJSONObject("data").getJSONArray("padIDs");
 		System.out.println(json_padIds.toJSONString());
-		String getPadQuery = "select pad_id from MissionPad MP where MP.mission=" + mission.getId() + "and MP.pad_id in (:padIds)";
+		String getPadQuery = "select pad_id from MissionPad MP where MP.mission=" + mission.getId() + " and MP.pad_id in (:padIds)";
 		String padId = (String)session.createQuery(getPadQuery).setParameterList("padIds", json_padIds.toArray()).uniqueResult();
 		JSONObject result = new JSONObject();
 		result.put("pad_id", padId);

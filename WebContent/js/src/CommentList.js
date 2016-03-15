@@ -43,7 +43,7 @@ const CommentList = React.createClass({
 			_this.setState({
 				comments : res 
 			});	
-			_getComments();	
+			//_getComments();	
 		});
 	},
 
