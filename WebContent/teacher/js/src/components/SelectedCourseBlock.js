@@ -9,6 +9,8 @@ var $ = require("jquery");
 
 import FlatButton from 'material-ui/lib/flat-button';
 import injectTapEventPlugin from 'react-tap-event-plugin';
+import Dialog from 'material-ui/lib/dialog';
+import StudentManage from "./StudentManage"
 
 var SelectedCourseBlock = React.createClass({
 
@@ -16,7 +18,8 @@ var SelectedCourseBlock = React.createClass({
 		return {
 			studentCount : 0,
 			groupCount : 0,
-			importing : false
+			importing : false,
+			editStudents : false
 		};
 	},
 
@@ -93,6 +96,16 @@ var SelectedCourseBlock = React.createClass({
 			alert("导入失败");
 		});
 	},
+	editStudents : function() {
+		this.setState({
+			editStudents : true 
+		});
+	},
+	cancelEditStudents : function() {
+		this.setState({
+			editStudents : false 
+		});
+	},
 	render: function() {
 		if(!selectedCourse.course) {
 			return <div />;	
@@ -108,11 +121,25 @@ var SelectedCourseBlock = React.createClass({
 				<button onClick={this.importStudents}>导入学生</button><br />
 				<a href="/pad/template.xlsx" target="_blank">导入模板下载</a>
 			</p>);
-		var studentCountText = <p>学生选课：{this.state.studentCount}人({this.state.groupCount}组)</p>;
+		var studentCountText = (<p onClick={this.editStudents}>学生选课：{this.state.studentCount}人({this.state.groupCount}组)</p>);
 		var studentBlock = this.state.studentCount > 0 ? studentCountText : importStudentButton;
 		if(this.state.importing) {
 			studentBlock = "导入学生中，请稍后"
 		}
+		var editDialog = (<Dialog
+		          title={"编辑课程学生"}
+		          modal={false}
+		          open={this.state.editStudents}
+		          onRequestClose={this.cancelEditStudents}
+		          contentStyle={{top : "0", position : "absolute", left:"50%", transform:"translateX(-50%)"}}
+				  autoScrollBodyContent={true}
+				>
+					<StudentManage course={selectedCourse.course} />
+				</Dialog>
+			);
+		// if(!this.state.editStudents) {
+		// 	editDialog = "";
+		// }
 		return (
 			<div style={{paddingLeft : 28}}>
 				<h4>课程名称：{selectedCourse.course.name}</h4>
@@ -121,6 +148,7 @@ var SelectedCourseBlock = React.createClass({
 				<p>
 					<FlatButton label="编辑" secondary={true} onClick={()=>{dialogController.show("course", "update")}} />
 				</p>
+				{editDialog}
 			</div>
 		);
 	}
