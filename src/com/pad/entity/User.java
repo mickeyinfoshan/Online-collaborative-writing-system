@@ -27,7 +27,7 @@ import com.pad.util.PadServerApi;
 @Entity
 @XmlRootElement
 @Table(name="t_user")
-public class User implements Serializable, Comparable<User> {
+public class User {
 	/**
 	 * 
 	 */
@@ -128,22 +128,22 @@ public class User implements Serializable, Comparable<User> {
 //		return ja;
 //	}
 
-	@Override
-	public int compareTo(User o) {
-		// TODO Auto-generated method stub
-		if (this.name.codePointAt(0) < o.name.codePointAt(0)) {
-			return -1;
-		} else if (this.name.codePointAt(0) > o.name.codePointAt(0)) {
-			return 1;
-		} else {
-			if (this.name.length() > o.name.length()) {
-				return 1;
-			} else if (this.name.length() < o.name.length()) {
-				return -1;
-			}
-		}
-		return 0;
-	}
+//	@Override
+//	public int compareTo(User o) {
+//		// TODO Auto-generated method stub
+//		if (this.name.codePointAt(0) < o.name.codePointAt(0)) {
+//			return -1;
+//		} else if (this.name.codePointAt(0) > o.name.codePointAt(0)) {
+//			return 1;
+//		} else {
+//			if (this.name.length() > o.name.length()) {
+//				return 1;
+//			} else if (this.name.length() < o.name.length()) {
+//				return -1;
+//			}
+//		}
+//		return 0;
+//	}
 	
 	public void initPadUser(){
 		String url = PadServerApi.getBaseRequestUrl("createAuthorIfNotExistsFor");

@@ -1,8 +1,12 @@
 package com.pad.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
@@ -10,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PadGroupUser {
 	private int id;
 	private String padGroupId;
-	private String user;
+	private User user;
 	@Id
 	@GeneratedValue
 	public int getId() {
@@ -25,10 +29,13 @@ public class PadGroupUser {
 	public void setPadGroupId(String padGroupId) {
 		this.padGroupId = padGroupId;
 	}
-	public String getUser() {
+	
+	@JoinColumn(name="user")
+	@ManyToOne
+	public User getUser() {
 		return user;
 	}
-	public void setUser(String user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 }

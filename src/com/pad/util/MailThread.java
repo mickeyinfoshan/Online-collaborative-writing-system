@@ -21,7 +21,7 @@ public class MailThread extends Thread {
 	private String password = "208063mjhlyb";
 	private String subjectText = "新任务提醒";
 	private Mission mission;
-	private List<String> receivers;
+	private List<User> receivers;
 	private SessionFactory sessionFactory;
 	public String getHost() {
 		return host;
@@ -82,10 +82,10 @@ public class MailThread extends Thread {
 	public void sendEmailTo(String to) {
 		MailSender.simpleSend(host, port, from, password, to, subjectText, getMessageText());
 	}
-	public List<String> getReceivers() {
+	public List<User> getReceivers() {
 		return receivers;
 	}
-	public void setReceivers(List<String> receivers) {
+	public void setReceivers(List<User> receivers) {
 		this.receivers = receivers;
 	}
 	
@@ -100,15 +100,14 @@ public class MailThread extends Thread {
 	//用 in 查询可以优化 谁有空谁做吧
 	@Transactional
 	public void run(){
-		Session session = sessionFactory.getCurrentSession();
-		Transaction t = session.beginTransaction();
+//		Session session = sessionFactory.getCurrentSession();
+//		Transaction t = session.beginTransaction();
 		for(int i = 0; i < receivers.size(); i++) {
-    	   String user_id = receivers.get(i);
-    	   User user = (User)session.get(User.class, user_id);
+    	   User user = receivers.get(i);
     	   String email = user.getUsername();
     	   this.sendEmailTo(email);
 		}
-		t.commit();
+//		t.commit();
     }
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;

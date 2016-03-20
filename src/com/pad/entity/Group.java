@@ -122,7 +122,7 @@ public class Group implements Serializable, Comparable<Group> {
 
 	public JSONArray usersJson() {
 		List<User> us = new ArrayList<User>(users);
-		Collections.sort(us);
+//		Collections.sort(us);
 
 		JsonConfig cfg = new JsonConfig();
 		cfg.setJsonPropertyFilter(new PropertyFilter() {

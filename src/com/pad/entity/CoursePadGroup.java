@@ -52,4 +52,6 @@ public class CoursePadGroup {
 		String groupId = res.getJSONObject("data").getString("groupID");
 		this.padGroupId = groupId;
 	}
+	
+	public CoursePadGroup() {}
 }

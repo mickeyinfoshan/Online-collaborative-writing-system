@@ -191,7 +191,7 @@ public class CourseApi extends BaseApi {
 		session.save(mission);
 		String nestedQuery = "(select padGroupId from CoursePadGroup CPG where CPG.course='" +  course_id + "')";
 		String query = "select user from PadGroupUser PGU where PGU.padGroupId in " + nestedQuery;
-		List<String> receivers = (List<String>)session.createQuery(query).list();
+		List<User> receivers = (List<User>)session.createQuery(query).list();
 		//create pad
 		String coursePadGroupQuery = "select padGroupId from CoursePadGroup cpg where cpg.course=" + course_id;
 		List<String> groupIds = (List<String>)session.createQuery(coursePadGroupQuery).list();
@@ -211,7 +211,7 @@ public class CourseApi extends BaseApi {
 		t.commit();
 		MailThread mt = new MailThread();
 		mt.setMission(mission);
-		mt.setSessionFactory(this.getSessionFactory());
+//		mt.setSessionFactory(this.getSessionFactory());
 		mt.setReceivers(receivers);
 		mt.start();
 		return "200";
@@ -376,7 +376,7 @@ public class CourseApi extends BaseApi {
 					user.initPadUser();
 				}
 				PadGroupUser padGroupUser = new PadGroupUser();
-				padGroupUser.setUser(user.getAuthorId());
+				padGroupUser.setUser(user);
 				padGroupUser.setPadGroupId(coursePadGroup.getPadGroupId());
 				session.save(padGroupUser);
 			}
@@ -398,12 +398,11 @@ public class CourseApi extends BaseApi {
 		String getPadGroupQuery = "select padGroupId from PadGroupUser PGU where PGU.user='" + user_id + "' and PGU.padGroupId in " + getPadGroupNestedQuery;
 		String padGroupId = (String)session.createQuery(getPadGroupQuery).list().get(0);
 		String getUsersQuery = "select user from PadGroupUser PGU where PGU.padGroupId='" + padGroupId + "'";
-		List<String> userIdList = (List<String>)session.createQuery(getUsersQuery).list();
+		List<User> userList = (List<User>)session.createQuery(getUsersQuery).list();
 		JSONArray result = new JSONArray();
 //		Session _session = mysf.openSession();
-		for(int i = 0; i < userIdList.size(); i++) {
-			String userId = userIdList.get(i);
-			User u = (User)session.get(User.class, userId);
+		for(int i = 0; i < userList.size(); i++) {
+			User u = userList.get(i);
 			result.add(u);
 		}
 //		_session.close();
