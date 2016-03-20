@@ -1,5 +1,7 @@
 package com.pad.api;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.List;
 
 import javax.ws.rs.FormParam;
@@ -15,12 +17,17 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.github.kevinsawicki.http.HttpRequest;
 import com.pad.entity.Course;
 import com.pad.entity.CoursePadGroup;
+import com.pad.entity.Mission;
+import com.pad.entity.MissionPad;
 import com.pad.entity.PadGroupUser;
 import com.pad.entity.User;
+import com.pad.util.PadServerApi;
 
 @Component
 @Path("/user")
@@ -118,12 +125,30 @@ public class UserApi extends BaseApi  {
 	
 	@GET
 	@Path("/add/group/for/course/{courseId}")
-	public String addGroup(@PathParam("courseId") int courseId) {
+	public String addGroup(@PathParam("courseId") int courseId) throws UnsupportedEncodingException {
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
 		Course course = (Course)session.get(Course.class, courseId);
 		CoursePadGroup coursePadGroup = new CoursePadGroup(course);
 		session.save(coursePadGroup);
+		String getMissionsQuery = "from Mission M where M.course=" + courseId;
+		List<Mission> missions = (List<Mission>)session.createQuery(getMissionsQuery).list();
+		String groupId = coursePadGroup.getPadGroupId();
+		String getGroupCountQuery = "select count(*) from CoursePadGroup CPG where CPG.course=" + courseId;
+		int groupCount = ((Long)session.createQuery(getGroupCountQuery).uniqueResult()).intValue();
+		for(int i = 0; i < missions.size(); i++) {
+			Mission mission = missions.get(i);
+			String padName = mission.getName() + "-小组" + groupCount;
+			String url = PadServerApi.getBaseRequestUrl("createGroupPad");
+			url += "&groupID=" + groupId;
+			url += "&padName=" + URLEncoder.encode(padName, "UTF-8");
+			url += "&text=" + URLEncoder.encode(mission.getContent(), "UTF-8");
+			String padId = JSON.parseObject(HttpRequest.get(url).body()).getJSONObject("data").getString("padID");
+			MissionPad mp = new MissionPad();
+			mp.setMission(mission);
+			mp.setPad_id(padId);
+			session.save(mp);
+		}
 		t.commit();
 		return coursePadGroup.getPadGroupId();
 	}
