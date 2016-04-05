@@ -36,6 +36,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.pad.entity.Course;
 import com.pad.entity.CoursePadGroup;
 import com.pad.entity.CourseStudent;
+import com.pad.entity.CourseTeacher;
 import com.pad.entity.Mission;
 import com.pad.entity.MissionPad;
 import com.pad.entity.PadGroupUser;
@@ -67,7 +68,8 @@ public class CourseApi extends BaseApi {
 	@Path("/teacher/{teacher_id}/list/years")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String[] getYears(@PathParam("teacher_id") String teacher_id) {
-		String query = "select year from Course C where teacher_id='" + teacher_id + "'";
+		String nestedQuery = "(select course from CourseTeacher CT from CT.teacher='" + teacher_id + "' )";
+		String query = "select year from Course C where C.id in " + nestedQuery;
 		if(teacher_id.equals("-1")) {
 			query = "select year from Course C";
 		}
@@ -83,7 +85,8 @@ public class CourseApi extends BaseApi {
 	@Path("/teacher/{teacher_id}/list/by/year/{year}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Course[] getCoursesByYear(@PathParam("teacher_id") String teacher_id, @PathParam("year") String year) {
-		String query = "from Course C where C.year='" + year + "' and C.teacher_id='" + teacher_id + "'";
+		String nestedQuery = "(select course from CourseTeacher CT from CT.teacher='" + teacher_id + "' )";
+		String query = "from Course C where C.year='" + year + "' and C.id in " + nestedQuery;
 		if(teacher_id.equals("-1")) {
 			query = "from Course C where C.year='" + year + "'";
 		}
@@ -97,6 +100,7 @@ public class CourseApi extends BaseApi {
 	
 	@POST
 	@Path("/teacher/{teacher_id}/create")
+	@Produces(MediaType.APPLICATION_JSON)
 	public String createCourse(
 			@PathParam("teacher_id") String teacher_id,
 			@FormParam(value="teacher_name") String teacher_name,
@@ -116,6 +120,57 @@ public class CourseApi extends BaseApi {
 		s.save(course);
 		t.commit();
 		return "200";
+	}
+	
+	@GET
+	@Path("/{course_id}/teacher/list")
+	@Produces(MediaType.APPLICATION_JSON)
+	public User[] listTeachers(@PathParam("course_id") int course_id) {
+		String query = "select teacher from CourseTeacher TC where TC.course=" + course_id;
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		List<User> teachers = (List<User>)session.createQuery(query).list();
+		t.commit();
+		return (User[])teachers.toArray();
+	}
+	
+	@GET
+	@Path("/{course_id}/remove/teacher/{teacher_id}")
+	public String removeTeacher(@PathParam("course_id") int course_id, @PathParam("teacher_id") String teacher_id) {
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		String query = "from CourseTeacher CT where CT.course=" + course_id + " and CT.teacher='" + teacher_id + "'";
+		List<CourseTeacher> list = (List<CourseTeacher>)session.createQuery(query).list();
+		for(int i = 0; i < list.size(); i++) {
+			CourseTeacher courseTeacher = list.get(i);
+			session.delete(courseTeacher);
+		}
+		t.commit();
+		return "200";
+	}
+	
+	@POST
+	@Path("/{course_id}/add/teachers")
+	public String addTeacherToCourse(@FormParam(value="teachers") String JSONStringTeachers, @PathParam("course_id") int course_id) {
+		Session session = getSession();
+		Transaction t = session.beginTransaction();
+		Course course = (Course)session.get(Course.class, course_id);
+		JSONArray JSONTeachers = JSON.parseArray(JSONStringTeachers);
+		for(int i = 0; i < JSONTeachers.size(); i++) {
+			JSONObject JSONTeacher = JSONTeachers.getJSONObject(i);
+			User teacher = new User();
+			teacher.setAuthority(5);
+			teacher.setName(JSONTeacher.getString("name"));
+			teacher.setUsername(JSONTeacher.getString("email"));
+			teacher.setPassword("");
+			session.save(teacher);
+			CourseTeacher courseTeacher = new CourseTeacher();
+			courseTeacher.setCourse(course);
+			courseTeacher.setTeacher(teacher);
+			session.save(courseTeacher);
+		}
+		t.commit();
+		return "200"; 
 	}
 	
 	@POST

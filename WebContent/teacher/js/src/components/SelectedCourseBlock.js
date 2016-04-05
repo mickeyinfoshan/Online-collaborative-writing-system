@@ -19,7 +19,8 @@ var SelectedCourseBlock = React.createClass({
 			studentCount : 0,
 			groupCount : 0,
 			importing : false,
-			editStudents : false
+			editStudents : false,
+			editTeachers : false
 		};
 	},
 
@@ -121,7 +122,7 @@ var SelectedCourseBlock = React.createClass({
 				<button onClick={this.importStudents}>导入学生</button><br />
 				<a href="/pad/template.xlsx" target="_blank">导入模板下载</a>
 			</p>);
-		var studentCountText = (<p onClick={this.editStudents}>学生选课：{this.state.studentCount}人({this.state.groupCount}组)</p>);
+		var studentCountText = (<p onClick={this.editStudents} style={{cursor:"pointer"}}>学生选课：{this.state.studentCount}人({this.state.groupCount}组)</p>);
 		var studentBlock = this.state.studentCount > 0 ? studentCountText : importStudentButton;
 		if(this.state.importing) {
 			studentBlock = "导入学生中，请稍后"

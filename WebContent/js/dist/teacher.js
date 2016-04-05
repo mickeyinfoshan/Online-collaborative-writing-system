@@ -66196,7 +66196,8 @@
 				studentCount: 0,
 				groupCount: 0,
 				importing: false,
-				editStudents: false
+				editStudents: false,
+				editTeachers: false
 			};
 		},
 
@@ -66308,7 +66309,7 @@
 			);
 			var studentCountText = React.createElement(
 				"p",
-				{ onClick: this.editStudents },
+				{ onClick: this.editStudents, style: { cursor: "pointer" } },
 				"学生选课：",
 				this.state.studentCount,
 				"人(",
@@ -66334,6 +66335,11 @@
 			// if(!this.state.editStudents) {
 			// 	editDialog = "";
 			// }
+			var teacherBlock = React.createElement(
+				"p",
+				null,
+				"课程老师："
+			);
 			return React.createElement(
 				"div",
 				{ style: { paddingLeft: 28 } },

@@ -20,9 +20,6 @@ import net.sf.json.util.PropertyFilter;
 
 import com.pad.util.DateUtil;
 
-@Entity
-@XmlRootElement
-@Table(name="t_group")
 public class Group implements Serializable, Comparable<Group> {
 	/**
 	 * 

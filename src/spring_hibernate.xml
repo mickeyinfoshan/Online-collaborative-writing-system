@@ -64,7 +64,7 @@
 	 <bean id="sessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
 		<property name="dataSource" ref="myds" />
 		<!-- 这里真丑 但是hibernate3好像不支持package scan -->
-		<property name="annotatedClasses">
+		<!-- <property name="annotatedClasses">
      		<list>
        			<value>com.pad.entity.Comment</value>
        			<value>com.pad.entity.Course</value>
@@ -77,7 +77,8 @@
        			<value>com.pad.entity.User</value>
        			<value>com.pad.entity.Pad</value>
      		</list>
- 		</property>
+ 		</property> -->
+ 		 <property name="packagesToScan" value="com.pad.entity" />
 		<property name="hibernateProperties">
 			<value>
 				hibernate.dialect =org.hibernate.dialect.MySQLDialect
