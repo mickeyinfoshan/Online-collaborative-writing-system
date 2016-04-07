@@ -176,15 +176,16 @@ public class CourseApi extends BaseApi {
 	@POST
 	@Path("/{course_id}/update")
 	public String updateCourse(
-			@PathParam("teacher_id") String teacher_id,
 			@PathParam("course_id") int course_id,
-			@FormParam(value="name") String name
+			@FormParam(value="name") String name,
+			@FormParam(value="year") String year
 		) {
 		
 		Session session = getSession();
 		Transaction t = session.beginTransaction();
 		Course course = (Course)session.get(Course.class, course_id);
 		course.setName(name);
+		course.setYear(year);
 		session.save(course);
 		t.commit();
 		return "200";
